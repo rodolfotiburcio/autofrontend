@@ -18,7 +18,7 @@ class WorkerCreate(WorkerBase):
 class WorkerResponse(WorkerBase):
     id: int
 
-class WorkerUpdate(WorkerBase):
+class WorkerUpdate(SQLModel):
     name: Optional[str] = None
     parental_surname: Optional[str] = None
     maternal_surname: Optional[str] = None
