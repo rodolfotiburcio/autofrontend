@@ -1,0 +1,48 @@
+{
+    "clientes": [
+      { "id": 1, "nombre": "Inamex Automation",   "estado": "Activo" },
+      { "id": 2, "nombre": "Tech Solutions",       "estado": "Inactivo" },
+      { "id": 3, "nombre": "Global Industries",    "estado": "Activo" },
+      { "id": 4, "nombre": "Finanzas SA",          "estado": "Pendiente" },
+      { "id": 5, "nombre": "Soluciones Inteligentes", "estado": "Activo" }
+    ],
+    "usuarios": [
+      { "username": "jmartinez",  "nombreCompleto": "Juana Martínez" },
+      { "username": "cfernandez", "nombreCompleto": "Carlos Fernández" },
+      { "username": "agomez",     "nombreCompleto": "Ana Gómez" },
+      { "username": "ltorres",    "nombreCompleto": "Luis Torres" },
+      { "username": "mlopez",     "nombreCompleto": "María López" }
+    ],
+    "proyectos": [
+      {
+        "id": 1,
+        "nombre": "Portal de Clientes",
+        "cliente": "Inamex Automation",
+        "responsable": "jmartinez"
+      },
+      {
+        "id": 2,
+        "nombre": "API Interna",
+        "cliente": "Tech Solutions",
+        "responsable": "cfernandez"
+      },
+      {
+        "id": 3,
+        "nombre": "Aplicación Móvil",
+        "cliente": "Global Industries",
+        "responsable": "agomez"
+      },
+      {
+        "id": 4,
+        "nombre": "Dashboard de Ventas",
+        "cliente": "Finanzas SA",
+        "responsable": "ltorres"
+      },
+      {
+        "id": 5,
+        "nombre": "Integración IoT",
+        "cliente": "Soluciones Inteligentes",
+        "responsable": "mlopez"
+      }
+    ]
+  }
