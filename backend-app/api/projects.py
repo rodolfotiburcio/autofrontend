@@ -16,5 +16,5 @@ def create_project(project: ProjectCreate, session: Session = Depends(get_sessio
 @router.get("/", response_model=list[ProjectResponse], operation_id="getProjects")
 def get_projects(session: Session = Depends(get_session)):
     statement = select(Project)
-    result = session.exec(statement)
+    result = session.exec(statement).all()
     return result
