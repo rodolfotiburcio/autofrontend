@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useMemo } from 'react'
 import {
   useGetProjects,
   useCreateProject,
@@ -16,6 +16,9 @@ import {
   IxModalContent,
   IxModalFooter,
 } from '@siemens/ix-react'
+import { AgGridReact } from 'ag-grid-react'
+import 'ag-grid-community/styles/ag-grid.css'
+import '@siemens/ix-aggrid/dist/ix-aggrid/ix-aggrid.css'
 
 export function ProjectList() {
   const { data, refetch } = useGetProjects()
@@ -54,6 +57,15 @@ export function ProjectList() {
   }
 
   const projects = data?.data ?? []
+  const columnDefs = useMemo(
+    () => [
+      { headerName: 'ID', field: 'id' },
+      { headerName: 'Nombre', field: 'name' },
+      { headerName: 'Cliente', field: 'client_id' },
+      { headerName: 'Responsable', field: 'worker_id' },
+    ],
+    [],
+  )
 
   return (
     <>
@@ -98,26 +110,9 @@ export function ProjectList() {
           </IxButton>
         </IxModalFooter>
       </IxModal>
-      <table className="ix-table ix-table-striped">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Cliente</th>
-            <th>Responsable</th>
-          </tr>
-        </thead>
-        <tbody>
-          {projects.map(p => (
-            <tr key={p.id}>
-              <td>{p.id}</td>
-              <td>{p.name}</td>
-              <td>{p.client_id}</td>
-              <td>{p.worker_id}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <div className="ag-theme-ix" style={{ width: '100%', height: '400px', marginTop: '1rem' }}>
+        <AgGridReact rowData={projects} columnDefs={columnDefs} />
+      </div>
     </>
   )
 }

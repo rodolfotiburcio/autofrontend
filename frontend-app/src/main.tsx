@@ -2,7 +2,9 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import './index.css'
-import '@siemens/ix/dist/siemens-ix/siemens-ix.css';
+import '@siemens/ix/dist/siemens-ix/siemens-ix.css'
+import 'ag-grid-community/styles/ag-grid.css'
+import '@siemens/ix-aggrid/dist/ix-aggrid/ix-aggrid.css'
 
 import App from './App.tsx'
 
