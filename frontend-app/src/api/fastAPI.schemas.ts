@@ -23,6 +23,31 @@ export interface HTTPValidationError {
   detail?: ValidationError[];
 }
 
+export type ProjectCreateClientId = number | null;
+
+export type ProjectCreateWorkerId = number | null;
+
+export interface ProjectCreate {
+  name: string;
+  client_id?: ProjectCreateClientId;
+  worker_id?: ProjectCreateWorkerId;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export type ProjectResponseClientId = number | null;
+
+export type ProjectResponseWorkerId = number | null;
+
+export interface ProjectResponse {
+  name: string;
+  client_id?: ProjectResponseClientId;
+  worker_id?: ProjectResponseWorkerId;
+  created_at?: string;
+  updated_at?: string;
+  id: number;
+}
+
 export type ValidationErrorLocItem = string | number;
 
 export interface ValidationError {
@@ -58,32 +83,4 @@ export interface WorkerUpdate {
   name?: WorkerUpdateName;
   parental_surname?: WorkerUpdateParentalSurname;
   maternal_surname?: WorkerUpdateMaternalSurname;
-}
-
-
-export interface ProjectCreate {
-  name: string;
-  client: string;
-  responsible: string;
-  created_at?: string;
-  updated_at?: string;
-}
-
-export interface ProjectResponse {
-  name: string;
-  client: string;
-  responsible: string;
-  created_at?: string;
-  updated_at?: string;
-  id: number;
-}
-
-export type ProjectUpdateName = string | null;
-export type ProjectUpdateClient = string | null;
-export type ProjectUpdateResponsible = string | null;
-
-export interface ProjectUpdate {
-  name?: ProjectUpdateName;
-  client?: ProjectUpdateClient;
-  responsible?: ProjectUpdateResponsible;
 }
