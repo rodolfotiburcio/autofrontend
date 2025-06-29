@@ -33,7 +33,8 @@ import type {
 import type {
   HTTPValidationError,
   WorkerCreate,
-  WorkerResponse
+  WorkerResponse,
+  WorkerUpdate
 } from './fastAPI.schemas';
 
 
@@ -245,6 +246,216 @@ export const useCreateWorker = <TError = AxiosError<HTTPValidationError>,
       > => {
 
       const mutationOptions = getCreateWorkerMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * @summary Get Worker
+ */
+export const getWorker = (
+    workerId: number, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<WorkerResponse>> => {
+    
+    
+    return axios.default.get(
+      `/api/workers/${workerId}`,options
+    );
+  }
+
+
+export const getGetWorkerQueryKey = (workerId: number,) => {
+    return [`/api/workers/${workerId}`] as const;
+    }
+
+    
+export const getGetWorkerQueryOptions = <TData = Awaited<ReturnType<typeof getWorker>>, TError = AxiosError<HTTPValidationError>>(workerId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWorker>>, TError, TData>>, axios?: AxiosRequestConfig}
+) => {
+
+const {query: queryOptions, axios: axiosOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetWorkerQueryKey(workerId);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getWorker>>> = ({ signal }) => getWorker(workerId, { signal, ...axiosOptions });
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(workerId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getWorker>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetWorkerQueryResult = NonNullable<Awaited<ReturnType<typeof getWorker>>>
+export type GetWorkerQueryError = AxiosError<HTTPValidationError>
+
+
+export function useGetWorker<TData = Awaited<ReturnType<typeof getWorker>>, TError = AxiosError<HTTPValidationError>>(
+ workerId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWorker>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getWorker>>,
+          TError,
+          Awaited<ReturnType<typeof getWorker>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetWorker<TData = Awaited<ReturnType<typeof getWorker>>, TError = AxiosError<HTTPValidationError>>(
+ workerId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWorker>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getWorker>>,
+          TError,
+          Awaited<ReturnType<typeof getWorker>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetWorker<TData = Awaited<ReturnType<typeof getWorker>>, TError = AxiosError<HTTPValidationError>>(
+ workerId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWorker>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get Worker
+ */
+
+export function useGetWorker<TData = Awaited<ReturnType<typeof getWorker>>, TError = AxiosError<HTTPValidationError>>(
+ workerId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWorker>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetWorkerQueryOptions(workerId,options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * @summary Update Worker
+ */
+export const updateWorker = (
+    workerId: number,
+    workerUpdate: WorkerUpdate, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<WorkerResponse>> => {
+    
+    
+    return axios.default.put(
+      `/api/workers/${workerId}`,
+      workerUpdate,options
+    );
+  }
+
+
+
+export const getUpdateWorkerMutationOptions = <TError = AxiosError<HTTPValidationError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateWorker>>, TError,{workerId: number;data: WorkerUpdate}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof updateWorker>>, TError,{workerId: number;data: WorkerUpdate}, TContext> => {
+
+const mutationKey = ['updateWorker'];
+const {mutation: mutationOptions, axios: axiosOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, axios: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateWorker>>, {workerId: number;data: WorkerUpdate}> = (props) => {
+          const {workerId,data} = props ?? {};
+
+          return  updateWorker(workerId,data,axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateWorkerMutationResult = NonNullable<Awaited<ReturnType<typeof updateWorker>>>
+    export type UpdateWorkerMutationBody = WorkerUpdate
+    export type UpdateWorkerMutationError = AxiosError<HTTPValidationError>
+
+    /**
+ * @summary Update Worker
+ */
+export const useUpdateWorker = <TError = AxiosError<HTTPValidationError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateWorker>>, TError,{workerId: number;data: WorkerUpdate}, TContext>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof updateWorker>>,
+        TError,
+        {workerId: number;data: WorkerUpdate},
+        TContext
+      > => {
+
+      const mutationOptions = getUpdateWorkerMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * @summary Delete Worker
+ */
+export const deleteWorker = (
+    workerId: number, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<void>> => {
+    
+    
+    return axios.default.delete(
+      `/api/workers/${workerId}`,options
+    );
+  }
+
+
+
+export const getDeleteWorkerMutationOptions = <TError = AxiosError<HTTPValidationError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteWorker>>, TError,{workerId: number}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteWorker>>, TError,{workerId: number}, TContext> => {
+
+const mutationKey = ['deleteWorker'];
+const {mutation: mutationOptions, axios: axiosOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, axios: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteWorker>>, {workerId: number}> = (props) => {
+          const {workerId} = props ?? {};
+
+          return  deleteWorker(workerId,axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteWorkerMutationResult = NonNullable<Awaited<ReturnType<typeof deleteWorker>>>
+    
+    export type DeleteWorkerMutationError = AxiosError<HTTPValidationError>
+
+    /**
+ * @summary Delete Worker
+ */
+export const useDeleteWorker = <TError = AxiosError<HTTPValidationError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteWorker>>, TError,{workerId: number}, TContext>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deleteWorker>>,
+        TError,
+        {workerId: number},
+        TContext
+      > => {
+
+      const mutationOptions = getDeleteWorkerMutationOptions(options);
 
       return useMutation(mutationOptions , queryClient);
     }

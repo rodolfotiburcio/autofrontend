@@ -33,3 +33,15 @@ export interface WorkerResponse {
   id: number;
 }
 
+export type WorkerUpdateName = string | null;
+
+export type WorkerUpdateParentalSurname = string | null;
+
+export type WorkerUpdateMaternalSurname = string | null;
+
+export interface WorkerUpdate {
+  name?: WorkerUpdateName;
+  parental_surname?: WorkerUpdateParentalSurname;
+  maternal_surname?: WorkerUpdateMaternalSurname;
+}
+

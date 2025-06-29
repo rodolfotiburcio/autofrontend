@@ -58,7 +58,7 @@ export function WorkerList() {
             <IxCardContent>
               <IxTypography bold>{w.name}</IxTypography>
               <IxTypography>{w.parental_surname} {w.maternal_surname}</IxTypography>
-              <IxTypography size="small">ID: {w.id}</IxTypography>
+              <IxTypography text-color="alarm">ID: {w.id}</IxTypography>
             </IxCardContent>
           </IxCard>
         ))}
