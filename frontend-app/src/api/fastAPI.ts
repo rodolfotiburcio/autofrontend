@@ -36,7 +36,10 @@ import type {
   HTTPValidationError,
   WorkerCreate,
   WorkerResponse,
-  WorkerUpdate
+  WorkerUpdate,
+  ProjectCreate,
+  ProjectResponse,
+  ProjectUpdate
 } from './fastAPI.schemas';
 
 
@@ -606,6 +609,123 @@ export const useCreateClient = <TError = AxiosError<HTTPValidationError>,
       > => {
 
       const mutationOptions = getCreateClientMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+
+/**
+ * @summary Get Projects
+ */
+export const getProjects = (
+     options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<ProjectResponse[]>> => {
+
+
+    return axios.default.get(
+      `/api/projects/`,options
+    );
+  }
+
+
+export const getGetProjectsQueryKey = () => {
+    return [`/api/projects/`] as const;
+    }
+
+
+export const getGetProjectsQueryOptions = <TData = Awaited<ReturnType<typeof getProjects>>, TError = AxiosError<unknown>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getProjects>>, TError, TData>>, axios?: AxiosRequestConfig}
+) => {
+
+const {query: queryOptions, axios: axiosOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetProjectsQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getProjects>>> = ({ signal }) => getProjects({ signal, ...axiosOptions });
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getProjects>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetProjectsQueryResult = NonNullable<Awaited<ReturnType<typeof getProjects>>>;
+export type GetProjectsQueryError = AxiosError<unknown>;
+
+
+export function useGetProjects<TData = Awaited<ReturnType<typeof getProjects>>, TError = AxiosError<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getProjects>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetProjectsQueryOptions(options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+/**
+ * @summary Create Project
+ */
+export const createProject = (
+    projectCreate: ProjectCreate, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<ProjectResponse>> => {
+
+
+    return axios.default.post(
+      `/api/projects/`,
+      projectCreate,options
+    );
+  }
+
+
+
+export const getCreateProjectMutationOptions = <TError = AxiosError<HTTPValidationError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createProject>>, TError,{data: ProjectCreate}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof createProject>>, TError,{data: ProjectCreate}, TContext> => {
+
+const mutationKey = ['createProject'];
+const {mutation: mutationOptions, axios: axiosOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, axios: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createProject>>, {data: ProjectCreate}> = (props) => {
+          const {data} = props ?? {};
+
+          return  createProject(data,axiosOptions)
+        }
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateProjectMutationResult = NonNullable<Awaited<ReturnType<typeof createProject>>>;
+    export type CreateProjectMutationBody = ProjectCreate;
+    export type CreateProjectMutationError = AxiosError<HTTPValidationError>;
+
+    /**
+ * @summary Create Project
+ */
+export const useCreateProject = <TError = AxiosError<HTTPValidationError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createProject>>, TError,{data: ProjectCreate}, TContext>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof createProject>>,
+        TError,
+        {data: ProjectCreate},
+        TContext
+      > => {
+
+      const mutationOptions = getCreateProjectMutationOptions(options);
 
       return useMutation(mutationOptions , queryClient);
     }
