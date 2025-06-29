@@ -4,6 +4,21 @@
  * FastAPI
  * OpenAPI spec version: 0.1.0
  */
+export interface ClientCreate {
+  name: string;
+  score: number;
+  create_at?: string;
+  updated_at?: string;
+}
+
+export interface ClientResponse {
+  name: string;
+  score: number;
+  create_at?: string;
+  updated_at?: string;
+  id: number;
+}
+
 export interface HTTPValidationError {
   detail?: ValidationError[];
 }

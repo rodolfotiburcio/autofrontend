@@ -46,24 +46,6 @@ export function WorkerList() {
 
   return (
     <>
-      <IxLayoutAuto
-        layout={[
-          { minWidth: '0', columns: 1 },
-          { minWidth: '560px', columns: 3 },
-          { minWidth: '800px', columns: 4 },
-        ]}
-      >
-        {workers.map(w => (
-          <IxCard key={w.id} variant="outline">
-            <IxCardContent>
-              <IxTypography bold>{w.name}</IxTypography>
-              <IxTypography>{w.parental_surname} {w.maternal_surname}</IxTypography>
-              <IxTypography text-color="alarm">ID: {w.id}</IxTypography>
-            </IxCardContent>
-          </IxCard>
-        ))}
-      </IxLayoutAuto>
-
       <form onSubmit={handleSubmit} style={{ marginTop: '1rem' }}>
         <IxInput
           placeholder="Nombre"
@@ -84,6 +66,23 @@ export function WorkerList() {
           Crear trabajador
         </IxButton>
       </form>
+      <IxLayoutAuto
+        layout={[
+          { minWidth: '0', columns: 1 },
+          { minWidth: '560px', columns: 3 },
+          { minWidth: '800px', columns: 4 },
+        ]}
+      >
+        {workers.map(w => (
+          <IxCard key={w.id} variant="outline">
+            <IxCardContent>
+              <IxTypography bold>{w.name}</IxTypography>
+              <IxTypography>{w.parental_surname} {w.maternal_surname}</IxTypography>
+              <IxTypography text-color="alarm">ID: {w.id}</IxTypography>
+            </IxCardContent>
+          </IxCard>
+        ))}
+      </IxLayoutAuto>
     </>
   )
 }

@@ -31,6 +31,8 @@ import type {
 } from 'axios';
 
 import type {
+  ClientCreate,
+  ClientResponse,
   HTTPValidationError,
   WorkerCreate,
   WorkerResponse,
@@ -456,6 +458,154 @@ export const useDeleteWorker = <TError = AxiosError<HTTPValidationError>,
       > => {
 
       const mutationOptions = getDeleteWorkerMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * @summary Get Clients
+ */
+export const getClients = (
+     options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<ClientResponse[]>> => {
+    
+    
+    return axios.default.get(
+      `/api/clients/`,options
+    );
+  }
+
+
+export const getGetClientsQueryKey = () => {
+    return [`/api/clients/`] as const;
+    }
+
+    
+export const getGetClientsQueryOptions = <TData = Awaited<ReturnType<typeof getClients>>, TError = AxiosError<unknown>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getClients>>, TError, TData>>, axios?: AxiosRequestConfig}
+) => {
+
+const {query: queryOptions, axios: axiosOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetClientsQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getClients>>> = ({ signal }) => getClients({ signal, ...axiosOptions });
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getClients>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetClientsQueryResult = NonNullable<Awaited<ReturnType<typeof getClients>>>
+export type GetClientsQueryError = AxiosError<unknown>
+
+
+export function useGetClients<TData = Awaited<ReturnType<typeof getClients>>, TError = AxiosError<unknown>>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getClients>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getClients>>,
+          TError,
+          Awaited<ReturnType<typeof getClients>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetClients<TData = Awaited<ReturnType<typeof getClients>>, TError = AxiosError<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getClients>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getClients>>,
+          TError,
+          Awaited<ReturnType<typeof getClients>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetClients<TData = Awaited<ReturnType<typeof getClients>>, TError = AxiosError<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getClients>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get Clients
+ */
+
+export function useGetClients<TData = Awaited<ReturnType<typeof getClients>>, TError = AxiosError<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getClients>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetClientsQueryOptions(options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * @summary Create Client
+ */
+export const createClient = (
+    clientCreate: ClientCreate, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<ClientResponse>> => {
+    
+    
+    return axios.default.post(
+      `/api/clients/`,
+      clientCreate,options
+    );
+  }
+
+
+
+export const getCreateClientMutationOptions = <TError = AxiosError<HTTPValidationError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createClient>>, TError,{data: ClientCreate}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof createClient>>, TError,{data: ClientCreate}, TContext> => {
+
+const mutationKey = ['createClient'];
+const {mutation: mutationOptions, axios: axiosOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, axios: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createClient>>, {data: ClientCreate}> = (props) => {
+          const {data} = props ?? {};
+
+          return  createClient(data,axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateClientMutationResult = NonNullable<Awaited<ReturnType<typeof createClient>>>
+    export type CreateClientMutationBody = ClientCreate
+    export type CreateClientMutationError = AxiosError<HTTPValidationError>
+
+    /**
+ * @summary Create Client
+ */
+export const useCreateClient = <TError = AxiosError<HTTPValidationError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createClient>>, TError,{data: ClientCreate}, TContext>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof createClient>>,
+        TError,
+        {data: ClientCreate},
+        TContext
+      > => {
+
+      const mutationOptions = getCreateClientMutationOptions(options);
 
       return useMutation(mutationOptions , queryClient);
     }
