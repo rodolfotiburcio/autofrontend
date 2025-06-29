@@ -60,3 +60,30 @@ export interface WorkerUpdate {
   maternal_surname?: WorkerUpdateMaternalSurname;
 }
 
+
+export interface ProjectCreate {
+  name: string;
+  client: string;
+  responsible: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface ProjectResponse {
+  name: string;
+  client: string;
+  responsible: string;
+  created_at?: string;
+  updated_at?: string;
+  id: number;
+}
+
+export type ProjectUpdateName = string | null;
+export type ProjectUpdateClient = string | null;
+export type ProjectUpdateResponsible = string | null;
+
+export interface ProjectUpdate {
+  name?: ProjectUpdateName;
+  client?: ProjectUpdateClient;
+  responsible?: ProjectUpdateResponsible;
+}
