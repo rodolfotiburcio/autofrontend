@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import {
   useGetWorkers,
   useCreateWorker,
@@ -11,11 +11,16 @@ import {
   IxLayoutAuto,
   IxInput,
   IxButton,
+  IxModal,
+  IxModalHeader,
+  IxModalContent,
+  IxModalFooter,
 } from '@siemens/ix-react'
 
 export function WorkerList() {
   const { data, refetch } = useGetWorkers()
   const createWorker = useCreateWorker()
+  const modalRef = useRef<HTMLIxModalElement>(null)
   const [form, setForm] = useState<WorkerCreate>({
     name: '',
     parental_surname: '',
@@ -36,6 +41,7 @@ export function WorkerList() {
       {
         onSuccess: () => {
           setForm({ name: '', parental_surname: '', maternal_surname: '' })
+          modalRef.current?.closeModal()
           refetch()
         },
       },
@@ -46,26 +52,37 @@ export function WorkerList() {
 
   return (
     <>
-      <form onSubmit={handleSubmit} style={{ marginTop: '1rem' }}>
-        <IxInput
-          placeholder="Nombre"
-          value={form.name}
-          onInput={handleChange('name')}
-        />
-        <IxInput
-          placeholder="Apellido paterno"
-          value={form.parental_surname}
-          onInput={handleChange('parental_surname')}
-        />
-        <IxInput
-          placeholder="Apellido materno"
-          value={form.maternal_surname}
-          onInput={handleChange('maternal_surname')}
-        />
-        <IxButton type="submit" style={{ marginTop: '0.5rem' }}>
-          Crear trabajador
-        </IxButton>
-      </form>
+      <IxButton onClick={() => modalRef.current?.showModal()} style={{ marginTop: '1rem' }}>
+        Nuevo trabajador
+      </IxButton>
+      <IxModal ref={modalRef} closeOnBackdropClick closeOnEscape>
+        <IxModalHeader>Crear trabajador</IxModalHeader>
+        <IxModalContent>
+          <form id="worker-form" onSubmit={handleSubmit}>
+            <IxInput
+              placeholder="Nombre"
+              value={form.name}
+              onInput={handleChange('name')}
+            />
+            <IxInput
+              placeholder="Apellido paterno"
+              value={form.parental_surname}
+              onInput={handleChange('parental_surname')}
+            />
+            <IxInput
+              placeholder="Apellido materno"
+              value={form.maternal_surname}
+              onInput={handleChange('maternal_surname')}
+            />
+          </form>
+        </IxModalContent>
+        <IxModalFooter>
+          <IxButton onClick={() => modalRef.current?.dismissModal()}>Cancelar</IxButton>
+          <IxButton type="submit" form="worker-form" style={{ marginLeft: '0.5rem' }}>
+            Crear
+          </IxButton>
+        </IxModalFooter>
+      </IxModal>
       <IxLayoutAuto
         layout={[
           { minWidth: '0', columns: 1 },
