@@ -1,11 +1,19 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { useGetProjects, useCreateProject } from '../api/fastAPI'
 import type { ProjectCreate } from '../api/fastAPI.schemas'
-import { IxInput, IxButton } from '@siemens/ix-react'
+import {
+  IxInput,
+  IxButton,
+  IxModal,
+  IxModalHeader,
+  IxModalContent,
+  IxModalFooter,
+} from '@siemens/ix-react'
 
 export function ProjectList() {
   const { data, refetch } = useGetProjects()
   const createProject = useCreateProject()
+  const modalRef = useRef<HTMLIxModalElement>(null)
   const [form, setForm] = useState<ProjectCreate>({
     name: '',
     client: '',
@@ -26,6 +34,7 @@ export function ProjectList() {
       {
         onSuccess: () => {
           setForm({ name: '', client: '', responsible: '' })
+          modalRef.current?.closeModal()
           refetch()
         },
       },
@@ -36,26 +45,37 @@ export function ProjectList() {
 
   return (
     <>
-      <form onSubmit={handleSubmit} style={{ marginTop: '1rem' }}>
-        <IxInput
-          placeholder="Nombre"
-          value={form.name}
-          onInput={handleChange('name')}
-        />
-        <IxInput
-          placeholder="Cliente"
-          value={form.client}
-          onInput={handleChange('client')}
-        />
-        <IxInput
-          placeholder="Responsable"
-          value={form.responsible}
-          onInput={handleChange('responsible')}
-        />
-        <IxButton type="submit" style={{ marginTop: '0.5rem' }}>
-          Crear proyecto
-        </IxButton>
-      </form>
+      <IxButton onClick={() => modalRef.current?.showModal()} style={{ marginTop: '1rem' }}>
+        Nuevo proyecto
+      </IxButton>
+      <IxModal ref={modalRef} closeOnBackdropClick closeOnEscape>
+        <IxModalHeader>Crear proyecto</IxModalHeader>
+        <IxModalContent>
+          <form id="project-form" onSubmit={handleSubmit}>
+            <IxInput
+              placeholder="Nombre"
+              value={form.name}
+              onInput={handleChange('name')}
+            />
+            <IxInput
+              placeholder="Cliente"
+              value={form.client}
+              onInput={handleChange('client')}
+            />
+            <IxInput
+              placeholder="Responsable"
+              value={form.responsible}
+              onInput={handleChange('responsible')}
+            />
+          </form>
+        </IxModalContent>
+        <IxModalFooter>
+          <IxButton onClick={() => modalRef.current?.dismissModal()}>Cancelar</IxButton>
+          <IxButton type="submit" form="project-form" style={{ marginLeft: '0.5rem' }}>
+            Crear
+          </IxButton>
+        </IxModalFooter>
+      </IxModal>
       <table className="ix-table ix-table-striped">
         <thead>
           <tr>
@@ -79,3 +99,4 @@ export function ProjectList() {
     </>
   )
 }
+
