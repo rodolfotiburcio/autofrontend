@@ -84,3 +84,4 @@ export interface WorkerUpdate {
   parental_surname?: WorkerUpdateParentalSurname;
   maternal_surname?: WorkerUpdateMaternalSurname;
 }
+

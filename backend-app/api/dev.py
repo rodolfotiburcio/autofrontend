@@ -8,3 +8,9 @@ router = APIRouter()
 def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
     return {"message":"Database created successfully"}
+
+@router.post("/reset-db")
+def reset_database():
+    SQLModel.metadata.drop_all(engine, checkfirst=False)
+    SQLModel.metadata.create_all(engine)
+    return {"message": "Database reset successfully"}
