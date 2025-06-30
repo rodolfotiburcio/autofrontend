@@ -13,7 +13,7 @@ import { WorkerList } from './components/WorkerList'
 import { ClientList } from './components/ClientList'
 import { ProjectList } from './components/ProjectList'
 
-import {useState, useEffect} from 'react'
+import {useState} from 'react'
 
 export default () => {
   const [currentTab, setCurrentTab] = useState<'workers'|'clients'|'projects'>('workers')

@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import type { WorkerResponse } from '../api/fastAPI.schemas'
 import { getWorkers } from '../api/fastAPI'
 
-import { IxCard, IxCardContent, IxIcon, IxTypography } from '@siemens/ix-react';
+import { IxCard, IxCardContent, IxTypography } from '@siemens/ix-react';
 import { IxLayoutAuto } from '@siemens/ix-react';
 
 export function ProductList() {
