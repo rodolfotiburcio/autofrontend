@@ -107,6 +107,67 @@ export const useCreateDbAndTablesApiDevCreateDbAndTablesPost = <TError = AxiosEr
     }
     
 /**
+ * @summary Reset Database
+ */
+export const resetDatabaseApiDevResetDbPost = (
+     options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<unknown>> => {
+    
+    
+    return axios.default.post(
+      `/api/dev/reset-db`,undefined,options
+    );
+  }
+
+
+
+export const getResetDatabaseApiDevResetDbPostMutationOptions = <TError = AxiosError<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof resetDatabaseApiDevResetDbPost>>, TError,void, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof resetDatabaseApiDevResetDbPost>>, TError,void, TContext> => {
+
+const mutationKey = ['resetDatabaseApiDevResetDbPost'];
+const {mutation: mutationOptions, axios: axiosOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, axios: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof resetDatabaseApiDevResetDbPost>>, void> = () => {
+          
+
+          return  resetDatabaseApiDevResetDbPost(axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ResetDatabaseApiDevResetDbPostMutationResult = NonNullable<Awaited<ReturnType<typeof resetDatabaseApiDevResetDbPost>>>
+    
+    export type ResetDatabaseApiDevResetDbPostMutationError = AxiosError<unknown>
+
+    /**
+ * @summary Reset Database
+ */
+export const useResetDatabaseApiDevResetDbPost = <TError = AxiosError<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof resetDatabaseApiDevResetDbPost>>, TError,void, TContext>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof resetDatabaseApiDevResetDbPost>>,
+        TError,
+        void,
+        TContext
+      > => {
+
+      const mutationOptions = getResetDatabaseApiDevResetDbPostMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
  * @summary Get Workers
  */
 export const getWorkers = (

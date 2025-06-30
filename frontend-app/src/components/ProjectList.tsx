@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo } from 'react'
+import React, { useState, useRef } from 'react'
 import {
   useGetProjects,
   useCreateProject,
@@ -16,8 +16,10 @@ import {
   IxModalContent,
   IxModalFooter,
 } from '@siemens/ix-react'
+import { type GridOptions } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react'
 import 'ag-grid-community/styles/ag-grid.css'
+import 'ag-grid-community/styles/ag-theme-alpine.css'
 import '@siemens/ix-aggrid/dist/ix-aggrid/ix-aggrid.css'
 
 export function ProjectList() {
@@ -25,7 +27,7 @@ export function ProjectList() {
   const createProject = useCreateProject()
   const { data: clientsData } = useGetClients()
   const { data: workersData } = useGetWorkers()
-  const modalRef = useRef<HTMLIxModalElement>(null)
+  const modalRef = useRef<any>(null)
   const [form, setForm] = useState<ProjectCreate>({
     name: '',
     client_id: undefined,
@@ -49,7 +51,7 @@ export function ProjectList() {
       {
         onSuccess: () => {
           setForm({ name: '', client_id: undefined, worker_id: undefined })
-          modalRef.current?.closeModal()
+          modalRef.current?.closeModal({})
           refetch()
         },
       },
@@ -57,22 +59,58 @@ export function ProjectList() {
   }
 
   const projects = data?.data ?? []
-  const columnDefs = useMemo(
-    () => [
-      { headerName: 'ID', field: 'id' },
-      { headerName: 'Nombre', field: 'name' },
-      { headerName: 'Cliente', field: 'client_id' },
-      { headerName: 'Responsable', field: 'worker_id' },
+
+  const gridOptions = {
+    columnDefs: [
+      {
+        field: 'id',
+        headerName: 'ID',
+        resizable: true,
+        checkboxSelection: true,
+      },
+      {
+        field: 'name',
+        headerName: 'Nombre',
+        resizable: true,
+        sortable: true,
+        filter: true,
+      },
+      {
+        field: 'client_id',
+        headerName: 'Cliente',
+        resizable: true,
+        sortable: true,
+        filter: true,
+      },
+      {
+        field: 'worker_id',
+        headerName: 'Responsable',
+        resizable: true,
+        sortable: true,
+        filter: true,
+      },
     ],
-    [],
-  )
+    rowData: projects,
+    rowSelection: 'multiple',
+    suppressCellFocus: true,
+    checkboxSelection: true,
+  } as GridOptions;
 
   return (
     <>
-      <IxButton onClick={() => modalRef.current?.showModal()} style={{ marginTop: '1rem' }}>
+      <IxButton
+        onClick={() => modalRef.current?.showModal()}
+        style={{ marginTop: '1rem' }}>
         Nuevo proyecto
       </IxButton>
-      <IxModal ref={modalRef} closeOnBackdropClick closeOnEscape>
+      <IxModal 
+        // @ts-expect-error - ref is supported by the component but not properly typed
+        ref={modalRef} 
+        closeOnBackdropClick 
+        closeOnEscape
+        onDialogClose={() => {}}
+        onDialogDismiss={() => {}}
+      >
         <IxModalHeader>Crear proyecto</IxModalHeader>
         <IxModalContent>
           <form id="project-form" onSubmit={handleSubmit}>
@@ -104,16 +142,20 @@ export function ProjectList() {
           </form>
         </IxModalContent>
         <IxModalFooter>
-          <IxButton onClick={() => modalRef.current?.dismissModal()}>Cancelar</IxButton>
+          <IxButton onClick={() => modalRef.current?.dismissModal()}>
+            Cancelar
+          </IxButton>
           <IxButton type="submit" form="project-form" style={{ marginLeft: '0.5rem' }}>
             Crear
           </IxButton>
         </IxModalFooter>
       </IxModal>
-      <div className="ag-theme-ix" style={{ width: '100%', height: '400px', marginTop: '1rem' }}>
-        <AgGridReact rowData={projects} columnDefs={columnDefs} />
+      <div style={{ width: '100%', height: '400px', marginTop: '1rem' }}>
+        <AgGridReact
+            gridOptions={gridOptions}
+            className="ag-theme-alpine-dark ag-theme-ix"
+        ></AgGridReact>
       </div>
     </>
   )
 }
-
