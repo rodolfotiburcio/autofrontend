@@ -12,6 +12,7 @@ import '@siemens/ix/dist/siemens-ix/siemens-ix.css'
 import { WorkerList } from './components/WorkerList'
 import { ClientList } from './components/ClientList'
 import { ProjectList } from './components/ProjectList'
+import { TestModal } from './components/TestModal'
 
 import {useState} from 'react'
 
@@ -45,7 +46,7 @@ export default () => {
         />
         {currentTab === 'clients' && <ClientList />}
         {currentTab === 'workers' && <WorkerList />}
-        {currentTab === 'projects' && <ProjectList />}
+        {currentTab === 'projects' && <TestModal />}
       </IxContent>
     </IxApplication>
   )
