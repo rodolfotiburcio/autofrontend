@@ -1,4 +1,8 @@
-import { useRef, useState } from 'react'
+import { useLayoutEffect, useRef } from 'react'
+import { yupResolver } from '@hookform/resolvers/yup'
+import clsx from 'clsx'
+import { useForm } from 'react-hook-form'
+import * as yup from 'yup'
 import {
   useGetWorkers,
   useCreateWorker,
@@ -11,7 +15,9 @@ import {
   IxLayoutAuto,
   IxInput,
   IxButton,
-  IxModal,
+  Modal,
+  type ModalRef,
+  showModal,
   IxModalHeader,
   IxModalContent,
   IxModalFooter,
@@ -20,36 +26,96 @@ import {
 export function WorkerList() {
   const { data, refetch } = useGetWorkers()
   const createWorker = useCreateWorker()
-  const modalRef = useRef<HTMLIxModalElement>(null)
-  const [form, setForm] = useState<WorkerCreate>({
-    name: '',
-    parental_surname: '',
-    maternal_surname: '',
+  const modalRef = useRef<ModalRef>(null)
+
+  const validationSchema = yup.object({
+    name: yup.string().required('El nombre es requerido'),
+    parental_surname: yup
+      .string()
+      .required('El apellido paterno es requerido'),
+    maternal_surname: yup
+      .string()
+      .required('El apellido materno es requerido'),
   })
 
-  const handleChange = (field: keyof WorkerCreate) => (
-    event: CustomEvent<{ value: string }> | React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const value = event.detail?.value ?? event.target.value
-    setForm(prev => ({ ...prev, [field]: value }))
-  }
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    trigger,
+    setValue,
+  } = useForm<WorkerCreate>({
+    mode: 'all',
+    reValidateMode: 'onChange',
+    defaultValues: { name: '', parental_surname: '', maternal_surname: '' },
+    resolver: yupResolver(validationSchema),
+  })
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+  useLayoutEffect(() => {
+    trigger()
+  }, [trigger])
+
+  const onSubmit = (data: WorkerCreate) => {
     createWorker.mutate(
-      { data: form },
+      { data },
       {
         onSuccess: () => {
-          setForm({ name: '', parental_surname: '', maternal_surname: '' })
-          modalRef.current?.closeModal()
+          modalRef.current?.close(null)
           refetch()
         },
       },
     )
   }
 
+  const handleChange = (field: keyof WorkerCreate) => (
+    event: CustomEvent<{ value: string }> | React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const value = event.detail?.value ?? event.target.value
+    setValue(field, value, { shouldValidate: true })
+  }
+
   const openModal = () => {
-    modalRef.current?.showModal()
+    showModal({
+      size: '600',
+      content: (
+        <Modal ref={modalRef}>
+          <IxModalHeader>Crear trabajador</IxModalHeader>
+          <IxModalContent>
+            <form id="worker-form" onSubmit={handleSubmit(onSubmit)}>
+              <IxLayoutAuto>
+                <IxInput
+                  label="Nombre"
+                  {...register('name')}
+                  onInput={handleChange('name')}
+                  className={clsx({ 'ix-invalid': errors.name })}
+                  invalidText={errors.name?.message}
+                />
+                <IxInput
+                  label="Apellido paterno"
+                  {...register('parental_surname')}
+                  onInput={handleChange('parental_surname')}
+                  className={clsx({ 'ix-invalid': errors.parental_surname })}
+                  invalidText={errors.parental_surname?.message}
+                />
+                <IxInput
+                  label="Apellido materno"
+                  {...register('maternal_surname')}
+                  onInput={handleChange('maternal_surname')}
+                  className={clsx({ 'ix-invalid': errors.maternal_surname })}
+                  invalidText={errors.maternal_surname?.message}
+                />
+              </IxLayoutAuto>
+            </form>
+          </IxModalContent>
+          <IxModalFooter>
+            <IxButton onClick={() => modalRef.current?.close(null)}>Cerrar</IxButton>
+            <IxButton type="submit" form="worker-form" style={{ marginLeft: '0.5rem' }}>
+              Crear
+            </IxButton>
+          </IxModalFooter>
+        </Modal>
+      ),
+    })
   }
 
   const workers = data?.data ?? []
@@ -59,35 +125,6 @@ export function WorkerList() {
       <IxButton onClick={openModal} style={{ marginTop: '1rem' }}>
         Nuevo trabajador
       </IxButton>
-
-      <IxModal ref={modalRef} closeOnBackdropClick closeOnEscape>
-        <IxModalHeader>Crear trabajador</IxModalHeader>
-        <IxModalContent>
-          <form id="worker-form" onSubmit={handleSubmit}>
-            <IxInput
-              placeholder="Nombre"
-              value={form.name}
-              onInput={handleChange('name')}
-            />
-            <IxInput
-              placeholder="Apellido paterno"
-              value={form.parental_surname}
-              onInput={handleChange('parental_surname')}
-            />
-            <IxInput
-              placeholder="Apellido materno"
-              value={form.maternal_surname}
-              onInput={handleChange('maternal_surname')}
-            />
-          </form>
-        </IxModalContent>
-        <IxModalFooter>
-          <IxButton onClick={() => modalRef.current?.dismissModal()}>Cancelar</IxButton>
-          <IxButton type="submit" form="worker-form" style={{ marginLeft: '0.5rem' }}>
-            Crear
-          </IxButton>
-        </IxModalFooter>
-      </IxModal>
 
       <IxLayoutAuto
         layout={[
