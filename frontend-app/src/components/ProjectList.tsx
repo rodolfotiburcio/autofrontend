@@ -1,4 +1,8 @@
-import React, { useState, useRef } from 'react'
+import React, { useLayoutEffect, useRef } from 'react'
+import { yupResolver } from '@hookform/resolvers/yup'
+import clsx from 'clsx'
+import { useForm } from 'react-hook-form'
+import * as yup from 'yup'
 import {
   useGetProjects,
   useCreateProject,
@@ -11,7 +15,9 @@ import {
   IxSelect,
   IxSelectItem,
   IxButton,
-  IxModal,
+  Modal,
+  type ModalRef,
+  showModal,
   IxModalHeader,
   IxModalContent,
   IxModalFooter,
@@ -28,39 +34,103 @@ export function ProjectList() {
   const createProject = useCreateProject()
   const { data: clientsData } = useGetClients()
   const { data: workersData } = useGetWorkers()
-  const modalRef = useRef<HTMLIxModalElement>(null)
-  const [form, setForm] = useState<ProjectCreate>({
-    name: '',
-    client_id: undefined,
-    worker_id: undefined,
+  const modalRef = useRef<ModalRef>(null)
+
+  const validationSchema = yup.object({
+    name: yup.string().required('El nombre es requerido'),
+    client_id: yup.number().typeError('Seleccione un cliente'),
+    worker_id: yup.number().typeError('Seleccione un responsable'),
   })
 
-  const handleChange = (field: keyof ProjectCreate) => (
-    event: CustomEvent<{ value: string }> | React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const value = event.detail?.value ?? event.target.value
-    setForm(prev => ({
-      ...prev,
-      [field]: field === 'client_id' || field === 'worker_id' ? Number(value) : value,
-    }))
-  }
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    trigger,
+    setValue,
+    watch,
+  } = useForm<ProjectCreate>({
+    mode: 'all',
+    reValidateMode: 'onChange',
+    defaultValues: { name: '', client_id: undefined, worker_id: undefined },
+    resolver: yupResolver(validationSchema),
+  })
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+  useLayoutEffect(() => {
+    trigger()
+  }, [trigger])
+
+  const onSubmit = (data: ProjectCreate) => {
     createProject.mutate(
-      { data: form },
+      { data },
       {
         onSuccess: () => {
-          setForm({ name: '', client_id: undefined, worker_id: undefined })
-          modalRef.current?.closeModal()
+          modalRef.current?.close(null)
           refetch()
         },
       },
     )
   }
 
+  const handleChange = (field: keyof ProjectCreate) => (
+    event: CustomEvent<{ value: string }> | React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const value = event.detail?.value ?? event.target.value
+    const parsed = field === 'client_id' || field === 'worker_id' ? Number(value) : value
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    setValue(field, parsed as any, { shouldValidate: true })
+  }
+
   const openModal = () => {
-    modalRef.current?.showModal()
+    showModal({
+      size: '600',
+      content: (
+        <Modal ref={modalRef}>
+          <IxModalHeader>Crear proyecto</IxModalHeader>
+          <IxModalContent>
+            <form id="project-form" onSubmit={handleSubmit(onSubmit)}>
+              <IxLayoutAuto>
+                <IxInput
+                  label="Nombre"
+                  {...register('name')}
+                  onInput={handleChange('name')}
+                  className={clsx({ 'ix-invalid': errors.name })}
+                  invalidText={errors.name?.message}
+                />
+                <IxSelect
+                  label="Cliente"
+                  value={(watch('client_id') ?? '').toString()}
+                  onValueChange={handleChange('client_id')}
+                >
+                  {(clientsData?.data ?? []).map(c => (
+                    <IxSelectItem key={c.id} label={c.name} value={c.id.toString()} />
+                  ))}
+                </IxSelect>
+                <IxSelect
+                  label="Responsable"
+                  value={(watch('worker_id') ?? '').toString()}
+                  onValueChange={handleChange('worker_id')}
+                >
+                  {(workersData?.data ?? []).map(w => (
+                    <IxSelectItem
+                      key={w.id}
+                      label={`${w.name} ${w.parental_surname}`}
+                      value={w.id.toString()}
+                    />
+                  ))}
+                </IxSelect>
+              </IxLayoutAuto>
+            </form>
+          </IxModalContent>
+          <IxModalFooter>
+            <IxButton onClick={() => modalRef.current?.close(null)}>Cerrar</IxButton>
+            <IxButton type="submit" form="project-form" style={{ marginLeft: '0.5rem' }}>
+              Crear
+            </IxButton>
+          </IxModalFooter>
+        </Modal>
+      ),
+    })
   }
 
   const projects = data?.data ?? []
@@ -105,44 +175,6 @@ export function ProjectList() {
         Nuevo proyecto
       </IxButton>
 
-      <IxModal ref={modalRef} closeOnEscape>
-        <IxModalHeader>Crear proyecto</IxModalHeader>
-        <IxModalContent>
-          <form id="project-form" onSubmit={handleSubmit}>
-            <IxInput
-              placeholder="Nombre"
-              value={form.name}
-              onInput={handleChange('name')}
-            />
-            <IxSelect
-              value={form.client_id?.toString() ?? ''}
-              onValueChange={handleChange('client_id')}
-            >
-              {(clientsData?.data ?? []).map(c => (
-                <IxSelectItem key={c.id} label={c.name} value={c.id.toString()} />
-              ))}
-            </IxSelect>
-            <IxSelect
-              value={form.worker_id?.toString() ?? ''}
-              onValueChange={handleChange('worker_id')}
-            >
-              {(workersData?.data ?? []).map(w => (
-                <IxSelectItem
-                  key={w.id}
-                  label={`${w.name} ${w.parental_surname}`}
-                  value={w.id.toString()}
-                />
-              ))}
-            </IxSelect>
-          </form>
-        </IxModalContent>
-        <IxModalFooter>
-          <IxButton onClick={() => modalRef.current?.dismissModal()}>Cancelar</IxButton>
-          <IxButton type="submit" form="project-form" style={{ marginLeft: '0.5rem' }}>
-            Crear
-          </IxButton>
-        </IxModalFooter>
-      </IxModal>
 
       <div style={{ width: '100%', height: '90%', marginTop: '1rem' }}>
         <AgGridReact
