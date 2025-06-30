@@ -18,7 +18,8 @@ import {
   type ModalRef,
   showModal,
 } from '@siemens/ix-react'
-import { type GridOptions } from 'ag-grid-community';
+import { useMemo } from 'react'
+import type { ColDef } from 'ag-grid-community'
 import { AgGridReact } from 'ag-grid-react'
 import 'ag-grid-community/styles/ag-grid.css'
 import 'ag-grid-community/styles/ag-theme-alpine.css'
@@ -37,7 +38,7 @@ export function ProjectList() {
   })
 
   const handleChange = (field: keyof ProjectCreate) => (
-    event: CustomEvent<{ value: string }> | any,
+    event: CustomEvent<{ value: string }> | React.ChangeEvent<HTMLInputElement>,
   ) => {
     const value = event.detail?.value ?? event.target.value
     setForm(prev => ({
@@ -107,8 +108,8 @@ export function ProjectList() {
 
   const projects = data?.data ?? []
 
-  const gridOptions = {
-    columnDefs: [
+  const columnDefs = useMemo<ColDef[]>(
+    () => [
       {
         field: 'id',
         headerName: 'ID',
@@ -136,9 +137,8 @@ export function ProjectList() {
         filter: true,
       },
     ],
-    rowData: projects,
-    suppressCellFocus: true,
-  } as GridOptions;
+    [],
+  )
 
   return (
     <>
@@ -150,8 +150,11 @@ export function ProjectList() {
 
       <div style={{ width: '100%', height: '400px', marginTop: '1rem' }}>
         <AgGridReact
-            gridOptions={gridOptions}
-            className="ag-theme-alpine-dark ag-theme-ix"
+          rowData={projects}
+          columnDefs={columnDefs}
+          rowSelection="multiple"
+          suppressCellFocus
+          className="ag-theme-alpine-dark ag-theme-ix"
         ></AgGridReact>
       </div>
     </>

@@ -30,7 +30,7 @@ export function WorkerList() {
   })
 
   const handleChange = (field: keyof WorkerCreate) => (
-    event: CustomEvent<{ value: string }> | any,
+    event: CustomEvent<{ value: string }> | React.ChangeEvent<HTMLInputElement>,
   ) => {
     const value = event.detail?.value ?? event.target.value
     setForm(prev => ({ ...prev, [field]: value }))
