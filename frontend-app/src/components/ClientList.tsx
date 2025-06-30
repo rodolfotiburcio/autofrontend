@@ -1,89 +1,116 @@
-// src/components/ClientList.tsx
-import React, { useState, useRef } from 'react'
-import { useGetClients, useCreateClient } from '../api/fastAPI'
-import type { ClientCreate } from '../api/fastAPI.schemas'
-import  {
-  IxInput,
-  IxButton,
-  IxModalHeader,
-  IxModalContent,
-  IxModalFooter,
-  Modal,
-  type ModalRef,
-  showModal,
+import {useLayoutEffect, useRef, useState }  from 'react'
+import { yupResolver } from '@hookform/resolvers/yup';
+
+import {
+    Modal,
+    type ModalRef,
+    showModal,
+    IxModalHeader,
+    IxModalContent,
+    IxModalFooter,
+    IxInput,
+    IxLayoutAuto,
+    IxNumberInput,
+    IxButton,
 } from '@siemens/ix-react'
+import { useCreateClient, useGetClients } from '../api/fastAPI';
+import clsx from 'clsx';
+import { useForm } from 'react-hook-form';
+import * as yup from 'yup';
 
-export function ClientList() {
-  const { data, refetch } = useGetClients()
-  const createClient = useCreateClient()
-  const modalRef = useRef<ModalRef>(null)
-  const [form, setForm] = useState<ClientCreate>({
-    name: '',
-    score: 10,
-  })
 
-  const handleChange = (field: keyof ClientCreate) => (
-    event: CustomEvent<{ value: string }> | React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const value = event.detail?.value ?? event.target.value
-    setForm(prev => ({ ...prev, [field]: value }))
-  }
+const validationSchema = yup.object({
+    name: yup.string().required('El nombre es requerido'),
+    score: yup
+      .number()
+      .max(10, 'La calificación debe ser igual o menor a 10'),
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    createClient.mutate(
-      { data: form },
-      {
-        onSuccess: () => {
-          setForm({ name: '', score: 10})
-          modalRef.current?.close(null)
-          refetch()
+export function ClientList(){
+    const {data, refetch } = useGetClients()
+    const modalRef = useRef<ModalRef>(null)
+    const createClient = useCreateClient()
+
+
+    const {
+        register,
+        handleSubmit,
+        control,
+        formState: { errors },
+        trigger,
+        setValue,
+      } = useForm({
+        mode: 'all',
+        reValidateMode: 'onChange',
+        defaultValues: {
+          name: 'Cliente',
+          score: 10,
         },
-      },
-    )
-  }
+        resolver: yupResolver(validationSchema),
+      });
 
-  const openModal = () => {
-    showModal({
-      content: (
-        <Modal ref={modalRef}>
-          <IxModalHeader>Crear cliente</IxModalHeader>
-          <IxModalContent>
-            <form id="client-form" onSubmit={handleSubmit}>
-              <IxInput
-                placeholder="Nombre"
-                value={form.name}
-                onInput={handleChange('name')}
-              />
-              <IxInput
-                placeholder="Calificacion"
-                value={form.score.toFixed(0)}
-                onInput={handleChange('score')}
-              />
-            </form>
-          </IxModalContent>
-          <IxModalFooter>
-            <IxButton onClick={() => modalRef.current?.dismiss(null)}>
-              Cancelar
-            </IxButton>
-            <IxButton type="submit" form="client-form" style={{ marginLeft: '0.5rem' }}>
-              Crear
-            </IxButton>
-          </IxModalFooter>
-        </Modal>
-      ),
-    })
-  }
+      useLayoutEffect(() => {
+        // Do instant validation after rendering
+        trigger();
+      }, [trigger]);
 
-  const clients = data?.data ?? []
+      const onSubmit = (data: any) => {
+        console.log(data);
+        createClient.mutate(
+            {data: data},
+            {
+                onSuccess: () => {
+                    modalRef.current?.close(null)
+                    refetch()
+                }
+            }
+        )
+      };
 
-  return (
-    <>
-      <IxButton onClick={openModal} style={{ marginTop: '1rem'}}>
-        Nuevo cliente
-      </IxButton>
-      
-      <table className="ix-table ix-table-striped">
+    const open =() => {
+        showModal({
+            size:"600",
+            content: (
+                <Modal ref={modalRef}>
+                    <IxModalHeader>Crear cliente</IxModalHeader>
+                    <IxModalContent>
+                        <form id="client-form" onSubmit={handleSubmit(onSubmit)} >
+                            <IxLayoutAuto>
+                                <IxInput
+                                    label="Name"
+                                    {...register('name')}
+                                    className={clsx({ 'ix-invalid': errors.name })}
+                                    invalidText={errors.name?.message}
+                                    required
+                                />
+                                <IxNumberInput
+                                    label="Calificacion"
+                                    data-colspan="1"
+                                    helperText="CAlificación maxima es 10"
+                                    {...register('score', { required: false, max: '10' })}
+                                    className={clsx({ 'ix-invalid': errors.score })}
+                                    invalidText={errors.score?.message}
+                                ></IxNumberInput>
+                            </IxLayoutAuto>
+                        </form>
+                    </IxModalContent>
+                        <IxModalFooter>
+                        <IxButton onClick={()=> modalRef.current?.close(null)}>
+                            Cerrar
+                        </IxButton>
+                        <IxButton type="submit" form="client-form" style={{ marginLeft: '0.5rem' }}>
+                            Crear
+                        </IxButton>
+                    </IxModalFooter>
+                </Modal>
+            )
+        })
+    }
+    const clients = data?.data ?? []
+    return (
+        <>
+            <IxButton onClick={() => open()}>Nuevo</IxButton>
+            <table className="ix-table ix-table-striped">
         <thead>
           <tr>
             <th>ID</th>

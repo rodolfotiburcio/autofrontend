@@ -26,7 +26,7 @@ const validationSchema = yup.object({
       .max(10, 'La calificación debe ser igual o menor a 10'),
   });
 
-export function TestModal(){
+export function ClientList(){
     const {data, refetch } = useGetClients()
     const modalRef = useRef<ModalRef>(null)
     const createClient = useCreateClient()
