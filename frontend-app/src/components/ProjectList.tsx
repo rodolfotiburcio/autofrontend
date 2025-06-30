@@ -15,7 +15,7 @@ import {
   IxModalContent,
   IxModalFooter,
   Modal,
-  ModalRef,
+  type ModalRef,
   showModal,
 } from '@siemens/ix-react'
 import { type GridOptions } from 'ag-grid-community';
@@ -63,7 +63,7 @@ export function ProjectList() {
   const openModal = () => {
     showModal({
       content: (
-        <Modal ref={modalRef} closeOnBackdropClick closeOnEscape>
+        <Modal ref={modalRef} >
           <IxModalHeader>Crear proyecto</IxModalHeader>
           <IxModalContent>
             <form id="project-form" onSubmit={handleSubmit}>
@@ -113,7 +113,6 @@ export function ProjectList() {
         field: 'id',
         headerName: 'ID',
         resizable: true,
-        checkboxSelection: true,
       },
       {
         field: 'name',
@@ -138,9 +137,7 @@ export function ProjectList() {
       },
     ],
     rowData: projects,
-    rowSelection: 'multiple',
     suppressCellFocus: true,
-    checkboxSelection: true,
   } as GridOptions;
 
   return (

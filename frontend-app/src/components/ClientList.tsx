@@ -9,7 +9,7 @@ import  {
   IxModalContent,
   IxModalFooter,
   Modal,
-  ModalRef,
+  type ModalRef,
   showModal,
 } from '@siemens/ix-react'
 
@@ -46,7 +46,7 @@ export function ClientList() {
   const openModal = () => {
     showModal({
       content: (
-        <Modal ref={modalRef} closeOnBackdropClick closeOnEscape>
+        <Modal ref={modalRef}>
           <IxModalHeader>Crear cliente</IxModalHeader>
           <IxModalContent>
             <form id="client-form" onSubmit={handleSubmit}>

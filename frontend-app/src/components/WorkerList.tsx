@@ -15,7 +15,7 @@ import {
   IxModalContent,
   IxModalFooter,
   Modal,
-  ModalRef,
+  type ModalRef,
   showModal,
 } from '@siemens/ix-react'
 
@@ -53,7 +53,7 @@ export function WorkerList() {
   const openModal = () => {
     showModal({
       content: (
-        <Modal ref={modalRef} closeOnBackdropClick closeOnEscape>
+        <Modal ref={modalRef} >
           <IxModalHeader>Crear trabajador</IxModalHeader>
           <IxModalContent>
             <form id="worker-form" onSubmit={handleSubmit}>
