@@ -5,16 +5,18 @@ import type { ClientCreate, ClientResponse } from '../api/fastAPI.schemas'
 import  {
   IxInput,
   IxButton,
-  IxModal,
   IxModalHeader,
   IxModalContent,
   IxModalFooter,
+  Modal,
+  ModalRef,
+  showModal,
 } from '@siemens/ix-react'
 
 export function ClientList() {
   const { data, refetch } = useGetClients()
   const createClient = useCreateClient()
-  const modalRef = useRef<HTMLIxModalElement>(null)
+  const modalRef = useRef<ModalRef>(null)
   const [form, setForm] = useState<ClientCreate>({
     name: '',
     score: 10,
@@ -34,43 +36,53 @@ export function ClientList() {
       {
         onSuccess: () => {
           setForm({ name: '', score: 10})
-          modalRef.current?.closeModal()
+          modalRef.current?.close(null)
           refetch()
         },
       },
     )
   }
 
+  const openModal = () => {
+    showModal({
+      content: (
+        <Modal ref={modalRef} closeOnBackdropClick closeOnEscape>
+          <IxModalHeader>Crear cliente</IxModalHeader>
+          <IxModalContent>
+            <form id="client-form" onSubmit={handleSubmit}>
+              <IxInput
+                placeholder="Nombre"
+                value={form.name}
+                onInput={handleChange('name')}
+              />
+              <IxInput
+                placeholder="Calificacion"
+                value={form.score.toFixed(0)}
+                onInput={handleChange('score')}
+              />
+            </form>
+          </IxModalContent>
+          <IxModalFooter>
+            <IxButton onClick={() => modalRef.current?.dismiss(null)}>
+              Cancelar
+            </IxButton>
+            <IxButton type="submit" form="client-form" style={{ marginLeft: '0.5rem' }}>
+              Crear
+            </IxButton>
+          </IxModalFooter>
+        </Modal>
+      ),
+    })
+  }
+
   const clients = data?.data ?? []
 
   return (
     <>
-      <IxButton onClick={() => modalRef.current?.showModal()} style={{ marginTop: '1rem'}}>
+      <IxButton onClick={openModal} style={{ marginTop: '1rem'}}>
         Nuevo cliente
       </IxButton>
-      <IxModal ref={modalRef} closeOnBackdropClick closeOnEscape>
-        <IxModalHeader>Crear cliente</IxModalHeader>
-        <IxModalContent>
-          <form id="client-form" onSubmit={handleSubmit}>
-            <IxInput
-              placeholder="Nombre"
-              value={form.name}
-              onInput={handleChange('name')}
-            />
-            <IxInput
-              placeholder="Calificacion"
-              value={form.score.toFixed(0)}
-              onInput={handleChange('score')}
-            />
-          </form>
-        </IxModalContent>
-        <IxModalFooter>
-          <IxButton onClick={() => modalRef.current?.dismissModal()}>Cancelar</IxButton>
-          <IxButton type="submit" form="client-form" style={{ marginLeft: '0.5rem'}}>
-            Crear
-          </IxButton>
-        </IxModalFooter>
-      </IxModal>
+      
       <table className="ix-table ix-table-striped">
         <thead>
           <tr>
