@@ -11,10 +11,12 @@ import {
   IxSelect,
   IxSelectItem,
   IxButton,
-  IxModal,
   IxModalHeader,
   IxModalContent,
   IxModalFooter,
+  Modal,
+  ModalRef,
+  showModal,
 } from '@siemens/ix-react'
 import { type GridOptions } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react'
@@ -27,7 +29,7 @@ export function ProjectList() {
   const createProject = useCreateProject()
   const { data: clientsData } = useGetClients()
   const { data: workersData } = useGetWorkers()
-  const modalRef = useRef<any>(null)
+  const modalRef = useRef<ModalRef>(null)
   const [form, setForm] = useState<ProjectCreate>({
     name: '',
     client_id: undefined,
@@ -51,11 +53,56 @@ export function ProjectList() {
       {
         onSuccess: () => {
           setForm({ name: '', client_id: undefined, worker_id: undefined })
-          modalRef.current?.closeModal({})
+          modalRef.current?.close({})
           refetch()
         },
       },
     )
+  }
+
+  const openModal = () => {
+    showModal({
+      content: (
+        <Modal ref={modalRef} closeOnBackdropClick closeOnEscape>
+          <IxModalHeader>Crear proyecto</IxModalHeader>
+          <IxModalContent>
+            <form id="project-form" onSubmit={handleSubmit}>
+              <IxInput
+                placeholder="Nombre"
+                value={form.name}
+                onInput={handleChange('name')}
+              />
+              <IxSelect
+                value={form.client_id?.toString() ?? ''}
+                onValueChange={handleChange('client_id')}
+              >
+                {(clientsData?.data ?? []).map(c => (
+                  <IxSelectItem key={c.id} label={c.name} value={c.id.toString()} />
+                ))}
+              </IxSelect>
+              <IxSelect
+                value={form.worker_id?.toString() ?? ''}
+                onValueChange={handleChange('worker_id')}
+              >
+                {(workersData?.data ?? []).map(w => (
+                  <IxSelectItem
+                    key={w.id}
+                    label={`${w.name} ${w.parental_surname}`}
+                    value={w.id.toString()}
+                  />
+                ))}
+              </IxSelect>
+            </form>
+          </IxModalContent>
+          <IxModalFooter>
+            <IxButton onClick={() => modalRef.current?.dismiss({})}>Cancelar</IxButton>
+            <IxButton type="submit" form="project-form" style={{ marginLeft: '0.5rem' }}>
+              Crear
+            </IxButton>
+          </IxModalFooter>
+        </Modal>
+      ),
+    })
   }
 
   const projects = data?.data ?? []
@@ -99,57 +146,11 @@ export function ProjectList() {
   return (
     <>
       <IxButton
-        onClick={() => modalRef.current?.showModal()}
+        onClick={openModal}
         style={{ marginTop: '1rem' }}>
         Nuevo proyecto
       </IxButton>
-      <IxModal 
-        // @ts-expect-error - ref is supported by the component but not properly typed
-        ref={modalRef} 
-        closeOnBackdropClick 
-        closeOnEscape
-        onDialogClose={() => {}}
-        onDialogDismiss={() => {}}
-      >
-        <IxModalHeader>Crear proyecto</IxModalHeader>
-        <IxModalContent>
-          <form id="project-form" onSubmit={handleSubmit}>
-            <IxInput
-              placeholder="Nombre"
-              value={form.name}
-              onInput={handleChange('name')}
-            />
-            <IxSelect
-              value={form.client_id?.toString() ?? ''}
-              onValueChange={handleChange('client_id')}
-            >
-              {(clientsData?.data ?? []).map(c => (
-                <IxSelectItem key={c.id} label={c.name} value={c.id.toString()} />
-              ))}
-            </IxSelect>
-            <IxSelect
-              value={form.worker_id?.toString() ?? ''}
-              onValueChange={handleChange('worker_id')}
-            >
-              {(workersData?.data ?? []).map(w => (
-                <IxSelectItem
-                  key={w.id}
-                  label={`${w.name} ${w.parental_surname}`}
-                  value={w.id.toString()}
-                />
-              ))}
-            </IxSelect>
-          </form>
-        </IxModalContent>
-        <IxModalFooter>
-          <IxButton onClick={() => modalRef.current?.dismissModal()}>
-            Cancelar
-          </IxButton>
-          <IxButton type="submit" form="project-form" style={{ marginLeft: '0.5rem' }}>
-            Crear
-          </IxButton>
-        </IxModalFooter>
-      </IxModal>
+
       <div style={{ width: '100%', height: '400px', marginTop: '1rem' }}>
         <AgGridReact
             gridOptions={gridOptions}
