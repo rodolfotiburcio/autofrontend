@@ -58,13 +58,20 @@ export function ProjectList() {
   } = useForm({
     mode: 'all',
     reValidateMode: 'onSubmit',
-    defaultValues: { 
+    defaultValues: {
       name: '',
       client_id: undefined,
       worker_id: undefined,
     },
     resolver: yupResolver(validationSchema),
   });
+
+  const handleSelectChange =
+    (field: 'client_id' | 'worker_id') =>
+    (event: CustomEvent<string | string[]>) => {
+      const value = Array.isArray(event.detail) ? event.detail[0] : event.detail
+      setValue(field, Number(value), { shouldValidate: true })
+    }
 
   useLayoutEffect(() => {
     trigger()
@@ -103,7 +110,8 @@ export function ProjectList() {
                 <IxSelect
                   label="Cliente"
                   value={(watch('client_id') ?? '').toString()}
-                  {...register('client_id',{ required: true })}
+                  {...register('client_id', { required: true })}
+                  onValueChange={handleSelectChange('client_id')}
                 >
                   {(clientsData?.data ?? []).map(c => (
                     <IxSelectItem key={c.id} label={c.name} value={c.id.toString()} />
@@ -112,7 +120,8 @@ export function ProjectList() {
                 <IxSelect
                   label="Responsable"
                   value={(watch('worker_id') ?? '').toString()}
-                  {...register('worker_id',{ required: true })}
+                  {...register('worker_id', { required: true })}
+                  onValueChange={handleSelectChange('worker_id')}
                 >
                   {(workersData?.data ?? []).map(w => (
                     <IxSelectItem
