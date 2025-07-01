@@ -21,6 +21,7 @@ import {
   IxModalHeader,
   IxModalContent,
   IxModalFooter,
+  IxLayoutAuto,
 } from '@siemens/ix-react'
 import { useMemo } from 'react'
 import type { ColDef } from 'ag-grid-community'
@@ -38,48 +39,51 @@ export function ProjectList() {
 
   const validationSchema = yup.object({
     name: yup.string().required('El nombre es requerido'),
-    client_id: yup.number().typeError('Seleccione un cliente'),
-    worker_id: yup.number().typeError('Seleccione un responsable'),
-  })
+    client_id: yup
+      .number()
+      .nonNullable(),
+    worker_id: yup
+      .number()
+      .nonNullable()
+  });
 
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
     trigger,
     setValue,
     watch,
-  } = useForm<ProjectCreate>({
+  } = useForm({
     mode: 'all',
-    reValidateMode: 'onChange',
-    defaultValues: { name: '', client_id: undefined, worker_id: undefined },
+    reValidateMode: 'onSubmit',
+    defaultValues: { 
+      name: '',
+      client_id: undefined,
+      worker_id: undefined,
+    },
     resolver: yupResolver(validationSchema),
-  })
+  });
 
   useLayoutEffect(() => {
     trigger()
-  }, [trigger])
+  }, [trigger]);
 
   const onSubmit = (data: ProjectCreate) => {
+    console.log(data);
     createProject.mutate(
       { data },
       {
         onSuccess: () => {
           modalRef.current?.close(null)
+          setValue('name','')
+          setValue('client_id', undefined)
           refetch()
-        },
-      },
+        }
+      }
     )
-  }
-
-  const handleChange = (field: keyof ProjectCreate) => (
-    event: CustomEvent<{ value: string }> | React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const value = event.detail?.value ?? event.target.value
-    const parsed = field === 'client_id' || field === 'worker_id' ? Number(value) : value
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    setValue(field, parsed as any, { shouldValidate: true })
-  }
+  };
 
   const openModal = () => {
     showModal({
@@ -93,14 +97,13 @@ export function ProjectList() {
                 <IxInput
                   label="Nombre"
                   {...register('name')}
-                  onInput={handleChange('name')}
                   className={clsx({ 'ix-invalid': errors.name })}
                   invalidText={errors.name?.message}
                 />
                 <IxSelect
                   label="Cliente"
                   value={(watch('client_id') ?? '').toString()}
-                  onValueChange={handleChange('client_id')}
+                  {...register('client_id',{ required: true })}
                 >
                   {(clientsData?.data ?? []).map(c => (
                     <IxSelectItem key={c.id} label={c.name} value={c.id.toString()} />
@@ -109,7 +112,7 @@ export function ProjectList() {
                 <IxSelect
                   label="Responsable"
                   value={(watch('worker_id') ?? '').toString()}
-                  onValueChange={handleChange('worker_id')}
+                  {...register('worker_id',{ required: true })}
                 >
                   {(workersData?.data ?? []).map(w => (
                     <IxSelectItem
