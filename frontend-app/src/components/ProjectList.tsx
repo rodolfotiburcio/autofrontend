@@ -146,6 +146,8 @@ export function ProjectList() {
   }
 
   const projects = data?.data ?? []
+  const clients = clientsData?.data ?? []
+  const workers = workersData?.data ?? []
 
   const columnDefs = useMemo<ColDef[]>(
     () => [
@@ -167,6 +169,8 @@ export function ProjectList() {
         resizable: true,
         sortable: true,
         filter: true,
+        valueGetter: params =>
+          clients.find(c => c.id === params.data.client_id)?.name ?? '',
       },
       {
         field: 'worker_id',
@@ -174,6 +178,10 @@ export function ProjectList() {
         resizable: true,
         sortable: true,
         filter: true,
+        valueGetter: params => {
+          const worker = workers.find(w => w.id === params.data.worker_id)
+          return worker ? `${worker.name} ${worker.parental_surname}` : ''
+        },
       },
     ],
     [],
