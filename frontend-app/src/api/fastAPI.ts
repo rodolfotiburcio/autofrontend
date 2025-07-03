@@ -33,9 +33,21 @@ import type {
 import type {
   ClientCreate,
   ClientResponse,
+  CommentCreate,
+  CommentResponse,
+  CommentUpdate,
+  CreateCommentParams,
+  DeleteCommentParams,
+  GetCommentParams,
+  GetCommentsParams,
   HTTPValidationError,
   ProjectCreate,
   ProjectResponse,
+  ProjectUpdate,
+  StatusCreate,
+  StatusResponse,
+  StatusUpdate,
+  UpdateCommentParams,
   WorkerCreate,
   WorkerResponse,
   WorkerUpdate
@@ -817,6 +829,952 @@ export const useCreateProject = <TError = AxiosError<HTTPValidationError>,
       > => {
 
       const mutationOptions = getCreateProjectMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * @summary Get Project
+ */
+export const getProject = (
+    projectId: number, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<ProjectResponse>> => {
+    
+    
+    return axios.default.get(
+      `/api/projects/${projectId}`,options
+    );
+  }
+
+
+export const getGetProjectQueryKey = (projectId: number,) => {
+    return [`/api/projects/${projectId}`] as const;
+    }
+
+    
+export const getGetProjectQueryOptions = <TData = Awaited<ReturnType<typeof getProject>>, TError = AxiosError<HTTPValidationError>>(projectId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getProject>>, TError, TData>>, axios?: AxiosRequestConfig}
+) => {
+
+const {query: queryOptions, axios: axiosOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetProjectQueryKey(projectId);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getProject>>> = ({ signal }) => getProject(projectId, { signal, ...axiosOptions });
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(projectId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getProject>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetProjectQueryResult = NonNullable<Awaited<ReturnType<typeof getProject>>>
+export type GetProjectQueryError = AxiosError<HTTPValidationError>
+
+
+export function useGetProject<TData = Awaited<ReturnType<typeof getProject>>, TError = AxiosError<HTTPValidationError>>(
+ projectId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getProject>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getProject>>,
+          TError,
+          Awaited<ReturnType<typeof getProject>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetProject<TData = Awaited<ReturnType<typeof getProject>>, TError = AxiosError<HTTPValidationError>>(
+ projectId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getProject>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getProject>>,
+          TError,
+          Awaited<ReturnType<typeof getProject>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetProject<TData = Awaited<ReturnType<typeof getProject>>, TError = AxiosError<HTTPValidationError>>(
+ projectId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getProject>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get Project
+ */
+
+export function useGetProject<TData = Awaited<ReturnType<typeof getProject>>, TError = AxiosError<HTTPValidationError>>(
+ projectId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getProject>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetProjectQueryOptions(projectId,options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * @summary Update Project
+ */
+export const updateProject = (
+    projectId: number,
+    projectUpdate: ProjectUpdate, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<ProjectResponse>> => {
+    
+    
+    return axios.default.put(
+      `/api/projects/${projectId}`,
+      projectUpdate,options
+    );
+  }
+
+
+
+export const getUpdateProjectMutationOptions = <TError = AxiosError<HTTPValidationError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateProject>>, TError,{projectId: number;data: ProjectUpdate}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof updateProject>>, TError,{projectId: number;data: ProjectUpdate}, TContext> => {
+
+const mutationKey = ['updateProject'];
+const {mutation: mutationOptions, axios: axiosOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, axios: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateProject>>, {projectId: number;data: ProjectUpdate}> = (props) => {
+          const {projectId,data} = props ?? {};
+
+          return  updateProject(projectId,data,axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateProjectMutationResult = NonNullable<Awaited<ReturnType<typeof updateProject>>>
+    export type UpdateProjectMutationBody = ProjectUpdate
+    export type UpdateProjectMutationError = AxiosError<HTTPValidationError>
+
+    /**
+ * @summary Update Project
+ */
+export const useUpdateProject = <TError = AxiosError<HTTPValidationError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateProject>>, TError,{projectId: number;data: ProjectUpdate}, TContext>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof updateProject>>,
+        TError,
+        {projectId: number;data: ProjectUpdate},
+        TContext
+      > => {
+
+      const mutationOptions = getUpdateProjectMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * @summary Delete Project
+ */
+export const deleteProject = (
+    projectId: number, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<void>> => {
+    
+    
+    return axios.default.delete(
+      `/api/projects/${projectId}`,options
+    );
+  }
+
+
+
+export const getDeleteProjectMutationOptions = <TError = AxiosError<HTTPValidationError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteProject>>, TError,{projectId: number}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteProject>>, TError,{projectId: number}, TContext> => {
+
+const mutationKey = ['deleteProject'];
+const {mutation: mutationOptions, axios: axiosOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, axios: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteProject>>, {projectId: number}> = (props) => {
+          const {projectId} = props ?? {};
+
+          return  deleteProject(projectId,axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteProjectMutationResult = NonNullable<Awaited<ReturnType<typeof deleteProject>>>
+    
+    export type DeleteProjectMutationError = AxiosError<HTTPValidationError>
+
+    /**
+ * @summary Delete Project
+ */
+export const useDeleteProject = <TError = AxiosError<HTTPValidationError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteProject>>, TError,{projectId: number}, TContext>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deleteProject>>,
+        TError,
+        {projectId: number},
+        TContext
+      > => {
+
+      const mutationOptions = getDeleteProjectMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * @summary Create Comment
+ */
+export const createComment = (
+    commentCreate: CommentCreate,
+    params: CreateCommentParams, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<CommentResponse>> => {
+    
+    
+    return axios.default.post(
+      `/api/projects/newcomment`,
+      commentCreate,{
+    ...options,
+        params: {...params, ...options?.params},}
+    );
+  }
+
+
+
+export const getCreateCommentMutationOptions = <TError = AxiosError<HTTPValidationError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createComment>>, TError,{data: CommentCreate;params: CreateCommentParams}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof createComment>>, TError,{data: CommentCreate;params: CreateCommentParams}, TContext> => {
+
+const mutationKey = ['createComment'];
+const {mutation: mutationOptions, axios: axiosOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, axios: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createComment>>, {data: CommentCreate;params: CreateCommentParams}> = (props) => {
+          const {data,params} = props ?? {};
+
+          return  createComment(data,params,axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateCommentMutationResult = NonNullable<Awaited<ReturnType<typeof createComment>>>
+    export type CreateCommentMutationBody = CommentCreate
+    export type CreateCommentMutationError = AxiosError<HTTPValidationError>
+
+    /**
+ * @summary Create Comment
+ */
+export const useCreateComment = <TError = AxiosError<HTTPValidationError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createComment>>, TError,{data: CommentCreate;params: CreateCommentParams}, TContext>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof createComment>>,
+        TError,
+        {data: CommentCreate;params: CreateCommentParams},
+        TContext
+      > => {
+
+      const mutationOptions = getCreateCommentMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * @summary Get Comments
+ */
+export const getComments = (
+    params: GetCommentsParams, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<CommentResponse[]>> => {
+    
+    
+    return axios.default.get(
+      `/api/projects/comments`,{
+    ...options,
+        params: {...params, ...options?.params},}
+    );
+  }
+
+
+export const getGetCommentsQueryKey = (params: GetCommentsParams,) => {
+    return [`/api/projects/comments`, ...(params ? [params]: [])] as const;
+    }
+
+    
+export const getGetCommentsQueryOptions = <TData = Awaited<ReturnType<typeof getComments>>, TError = AxiosError<HTTPValidationError>>(params: GetCommentsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getComments>>, TError, TData>>, axios?: AxiosRequestConfig}
+) => {
+
+const {query: queryOptions, axios: axiosOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetCommentsQueryKey(params);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getComments>>> = ({ signal }) => getComments(params, { signal, ...axiosOptions });
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getComments>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetCommentsQueryResult = NonNullable<Awaited<ReturnType<typeof getComments>>>
+export type GetCommentsQueryError = AxiosError<HTTPValidationError>
+
+
+export function useGetComments<TData = Awaited<ReturnType<typeof getComments>>, TError = AxiosError<HTTPValidationError>>(
+ params: GetCommentsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getComments>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getComments>>,
+          TError,
+          Awaited<ReturnType<typeof getComments>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetComments<TData = Awaited<ReturnType<typeof getComments>>, TError = AxiosError<HTTPValidationError>>(
+ params: GetCommentsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getComments>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getComments>>,
+          TError,
+          Awaited<ReturnType<typeof getComments>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetComments<TData = Awaited<ReturnType<typeof getComments>>, TError = AxiosError<HTTPValidationError>>(
+ params: GetCommentsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getComments>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get Comments
+ */
+
+export function useGetComments<TData = Awaited<ReturnType<typeof getComments>>, TError = AxiosError<HTTPValidationError>>(
+ params: GetCommentsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getComments>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetCommentsQueryOptions(params,options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * @summary Get Comment
+ */
+export const getComment = (
+    commentId: number,
+    params: GetCommentParams, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<CommentResponse>> => {
+    
+    
+    return axios.default.get(
+      `/api/projects/comment/${commentId}`,{
+    ...options,
+        params: {...params, ...options?.params},}
+    );
+  }
+
+
+export const getGetCommentQueryKey = (commentId: number,
+    params: GetCommentParams,) => {
+    return [`/api/projects/comment/${commentId}`, ...(params ? [params]: [])] as const;
+    }
+
+    
+export const getGetCommentQueryOptions = <TData = Awaited<ReturnType<typeof getComment>>, TError = AxiosError<HTTPValidationError>>(commentId: number,
+    params: GetCommentParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getComment>>, TError, TData>>, axios?: AxiosRequestConfig}
+) => {
+
+const {query: queryOptions, axios: axiosOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetCommentQueryKey(commentId,params);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getComment>>> = ({ signal }) => getComment(commentId,params, { signal, ...axiosOptions });
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(commentId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getComment>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetCommentQueryResult = NonNullable<Awaited<ReturnType<typeof getComment>>>
+export type GetCommentQueryError = AxiosError<HTTPValidationError>
+
+
+export function useGetComment<TData = Awaited<ReturnType<typeof getComment>>, TError = AxiosError<HTTPValidationError>>(
+ commentId: number,
+    params: GetCommentParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getComment>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getComment>>,
+          TError,
+          Awaited<ReturnType<typeof getComment>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetComment<TData = Awaited<ReturnType<typeof getComment>>, TError = AxiosError<HTTPValidationError>>(
+ commentId: number,
+    params: GetCommentParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getComment>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getComment>>,
+          TError,
+          Awaited<ReturnType<typeof getComment>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetComment<TData = Awaited<ReturnType<typeof getComment>>, TError = AxiosError<HTTPValidationError>>(
+ commentId: number,
+    params: GetCommentParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getComment>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get Comment
+ */
+
+export function useGetComment<TData = Awaited<ReturnType<typeof getComment>>, TError = AxiosError<HTTPValidationError>>(
+ commentId: number,
+    params: GetCommentParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getComment>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetCommentQueryOptions(commentId,params,options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * @summary Update Comment
+ */
+export const updateComment = (
+    commentId: number,
+    commentUpdate: CommentUpdate,
+    params: UpdateCommentParams, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<CommentResponse>> => {
+    
+    
+    return axios.default.put(
+      `/api/projects/comment/${commentId}`,
+      commentUpdate,{
+    ...options,
+        params: {...params, ...options?.params},}
+    );
+  }
+
+
+
+export const getUpdateCommentMutationOptions = <TError = AxiosError<HTTPValidationError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateComment>>, TError,{commentId: number;data: CommentUpdate;params: UpdateCommentParams}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof updateComment>>, TError,{commentId: number;data: CommentUpdate;params: UpdateCommentParams}, TContext> => {
+
+const mutationKey = ['updateComment'];
+const {mutation: mutationOptions, axios: axiosOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, axios: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateComment>>, {commentId: number;data: CommentUpdate;params: UpdateCommentParams}> = (props) => {
+          const {commentId,data,params} = props ?? {};
+
+          return  updateComment(commentId,data,params,axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateCommentMutationResult = NonNullable<Awaited<ReturnType<typeof updateComment>>>
+    export type UpdateCommentMutationBody = CommentUpdate
+    export type UpdateCommentMutationError = AxiosError<HTTPValidationError>
+
+    /**
+ * @summary Update Comment
+ */
+export const useUpdateComment = <TError = AxiosError<HTTPValidationError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateComment>>, TError,{commentId: number;data: CommentUpdate;params: UpdateCommentParams}, TContext>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof updateComment>>,
+        TError,
+        {commentId: number;data: CommentUpdate;params: UpdateCommentParams},
+        TContext
+      > => {
+
+      const mutationOptions = getUpdateCommentMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * @summary Delete Comment
+ */
+export const deleteComment = (
+    commentId: number,
+    params: DeleteCommentParams, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<void>> => {
+    
+    
+    return axios.default.delete(
+      `/api/projects/comment/${commentId}`,{
+    ...options,
+        params: {...params, ...options?.params},}
+    );
+  }
+
+
+
+export const getDeleteCommentMutationOptions = <TError = AxiosError<HTTPValidationError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteComment>>, TError,{commentId: number;params: DeleteCommentParams}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteComment>>, TError,{commentId: number;params: DeleteCommentParams}, TContext> => {
+
+const mutationKey = ['deleteComment'];
+const {mutation: mutationOptions, axios: axiosOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, axios: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteComment>>, {commentId: number;params: DeleteCommentParams}> = (props) => {
+          const {commentId,params} = props ?? {};
+
+          return  deleteComment(commentId,params,axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteCommentMutationResult = NonNullable<Awaited<ReturnType<typeof deleteComment>>>
+    
+    export type DeleteCommentMutationError = AxiosError<HTTPValidationError>
+
+    /**
+ * @summary Delete Comment
+ */
+export const useDeleteComment = <TError = AxiosError<HTTPValidationError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteComment>>, TError,{commentId: number;params: DeleteCommentParams}, TContext>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deleteComment>>,
+        TError,
+        {commentId: number;params: DeleteCommentParams},
+        TContext
+      > => {
+
+      const mutationOptions = getDeleteCommentMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * @summary Create Status
+ */
+export const createStatus = (
+    statusCreate: StatusCreate, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<StatusResponse>> => {
+    
+    
+    return axios.default.post(
+      `/api/projects/newstatus`,
+      statusCreate,options
+    );
+  }
+
+
+
+export const getCreateStatusMutationOptions = <TError = AxiosError<HTTPValidationError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createStatus>>, TError,{data: StatusCreate}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof createStatus>>, TError,{data: StatusCreate}, TContext> => {
+
+const mutationKey = ['createStatus'];
+const {mutation: mutationOptions, axios: axiosOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, axios: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createStatus>>, {data: StatusCreate}> = (props) => {
+          const {data} = props ?? {};
+
+          return  createStatus(data,axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateStatusMutationResult = NonNullable<Awaited<ReturnType<typeof createStatus>>>
+    export type CreateStatusMutationBody = StatusCreate
+    export type CreateStatusMutationError = AxiosError<HTTPValidationError>
+
+    /**
+ * @summary Create Status
+ */
+export const useCreateStatus = <TError = AxiosError<HTTPValidationError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createStatus>>, TError,{data: StatusCreate}, TContext>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof createStatus>>,
+        TError,
+        {data: StatusCreate},
+        TContext
+      > => {
+
+      const mutationOptions = getCreateStatusMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * @summary Get Statuses
+ */
+export const getStatuses = (
+     options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<StatusResponse[]>> => {
+    
+    
+    return axios.default.get(
+      `/api/projects/statuses`,options
+    );
+  }
+
+
+export const getGetStatusesQueryKey = () => {
+    return [`/api/projects/statuses`] as const;
+    }
+
+    
+export const getGetStatusesQueryOptions = <TData = Awaited<ReturnType<typeof getStatuses>>, TError = AxiosError<unknown>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStatuses>>, TError, TData>>, axios?: AxiosRequestConfig}
+) => {
+
+const {query: queryOptions, axios: axiosOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetStatusesQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getStatuses>>> = ({ signal }) => getStatuses({ signal, ...axiosOptions });
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getStatuses>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetStatusesQueryResult = NonNullable<Awaited<ReturnType<typeof getStatuses>>>
+export type GetStatusesQueryError = AxiosError<unknown>
+
+
+export function useGetStatuses<TData = Awaited<ReturnType<typeof getStatuses>>, TError = AxiosError<unknown>>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStatuses>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getStatuses>>,
+          TError,
+          Awaited<ReturnType<typeof getStatuses>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetStatuses<TData = Awaited<ReturnType<typeof getStatuses>>, TError = AxiosError<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStatuses>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getStatuses>>,
+          TError,
+          Awaited<ReturnType<typeof getStatuses>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetStatuses<TData = Awaited<ReturnType<typeof getStatuses>>, TError = AxiosError<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStatuses>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get Statuses
+ */
+
+export function useGetStatuses<TData = Awaited<ReturnType<typeof getStatuses>>, TError = AxiosError<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStatuses>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetStatusesQueryOptions(options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * @summary Get Status
+ */
+export const getStatus = (
+    statusId: number, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<StatusResponse>> => {
+    
+    
+    return axios.default.get(
+      `/api/projects/status/${statusId}`,options
+    );
+  }
+
+
+export const getGetStatusQueryKey = (statusId: number,) => {
+    return [`/api/projects/status/${statusId}`] as const;
+    }
+
+    
+export const getGetStatusQueryOptions = <TData = Awaited<ReturnType<typeof getStatus>>, TError = AxiosError<HTTPValidationError>>(statusId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStatus>>, TError, TData>>, axios?: AxiosRequestConfig}
+) => {
+
+const {query: queryOptions, axios: axiosOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetStatusQueryKey(statusId);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getStatus>>> = ({ signal }) => getStatus(statusId, { signal, ...axiosOptions });
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(statusId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getStatus>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetStatusQueryResult = NonNullable<Awaited<ReturnType<typeof getStatus>>>
+export type GetStatusQueryError = AxiosError<HTTPValidationError>
+
+
+export function useGetStatus<TData = Awaited<ReturnType<typeof getStatus>>, TError = AxiosError<HTTPValidationError>>(
+ statusId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStatus>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getStatus>>,
+          TError,
+          Awaited<ReturnType<typeof getStatus>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetStatus<TData = Awaited<ReturnType<typeof getStatus>>, TError = AxiosError<HTTPValidationError>>(
+ statusId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStatus>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getStatus>>,
+          TError,
+          Awaited<ReturnType<typeof getStatus>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetStatus<TData = Awaited<ReturnType<typeof getStatus>>, TError = AxiosError<HTTPValidationError>>(
+ statusId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStatus>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get Status
+ */
+
+export function useGetStatus<TData = Awaited<ReturnType<typeof getStatus>>, TError = AxiosError<HTTPValidationError>>(
+ statusId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStatus>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetStatusQueryOptions(statusId,options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * @summary Update Status
+ */
+export const updateStatus = (
+    statusId: number,
+    statusUpdate: StatusUpdate, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<StatusResponse>> => {
+    
+    
+    return axios.default.put(
+      `/api/projects/status/${statusId}`,
+      statusUpdate,options
+    );
+  }
+
+
+
+export const getUpdateStatusMutationOptions = <TError = AxiosError<HTTPValidationError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateStatus>>, TError,{statusId: number;data: StatusUpdate}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof updateStatus>>, TError,{statusId: number;data: StatusUpdate}, TContext> => {
+
+const mutationKey = ['updateStatus'];
+const {mutation: mutationOptions, axios: axiosOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, axios: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateStatus>>, {statusId: number;data: StatusUpdate}> = (props) => {
+          const {statusId,data} = props ?? {};
+
+          return  updateStatus(statusId,data,axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateStatusMutationResult = NonNullable<Awaited<ReturnType<typeof updateStatus>>>
+    export type UpdateStatusMutationBody = StatusUpdate
+    export type UpdateStatusMutationError = AxiosError<HTTPValidationError>
+
+    /**
+ * @summary Update Status
+ */
+export const useUpdateStatus = <TError = AxiosError<HTTPValidationError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateStatus>>, TError,{statusId: number;data: StatusUpdate}, TContext>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof updateStatus>>,
+        TError,
+        {statusId: number;data: StatusUpdate},
+        TContext
+      > => {
+
+      const mutationOptions = getUpdateStatusMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * @summary Delete Status
+ */
+export const deleteStatus = (
+    statusId: number, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<void>> => {
+    
+    
+    return axios.default.delete(
+      `/api/projects/status/${statusId}`,options
+    );
+  }
+
+
+
+export const getDeleteStatusMutationOptions = <TError = AxiosError<HTTPValidationError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteStatus>>, TError,{statusId: number}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteStatus>>, TError,{statusId: number}, TContext> => {
+
+const mutationKey = ['deleteStatus'];
+const {mutation: mutationOptions, axios: axiosOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, axios: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteStatus>>, {statusId: number}> = (props) => {
+          const {statusId} = props ?? {};
+
+          return  deleteStatus(statusId,axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteStatusMutationResult = NonNullable<Awaited<ReturnType<typeof deleteStatus>>>
+    
+    export type DeleteStatusMutationError = AxiosError<HTTPValidationError>
+
+    /**
+ * @summary Delete Status
+ */
+export const useDeleteStatus = <TError = AxiosError<HTTPValidationError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteStatus>>, TError,{statusId: number}, TContext>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deleteStatus>>,
+        TError,
+        {statusId: number},
+        TContext
+      > => {
+
+      const mutationOptions = getDeleteStatusMutationOptions(options);
 
       return useMutation(mutationOptions , queryClient);
     }

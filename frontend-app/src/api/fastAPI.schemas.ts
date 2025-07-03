@@ -19,6 +19,31 @@ export interface ClientResponse {
   id: number;
 }
 
+export interface CommentCreate {
+  project_id: number;
+  date?: string;
+  comment: string;
+}
+
+export interface CommentResponse {
+  project_id: number;
+  date?: string;
+  comment: string;
+  id: number;
+}
+
+export type CommentUpdateProjectId = number | null;
+
+export type CommentUpdateDate = string | null;
+
+export type CommentUpdateComment = string | null;
+
+export interface CommentUpdate {
+  project_id?: CommentUpdateProjectId;
+  date?: CommentUpdateDate;
+  comment?: CommentUpdateComment;
+}
+
 export interface HTTPValidationError {
   detail?: ValidationError[];
 }
@@ -27,10 +52,31 @@ export type ProjectCreateClientId = number | null;
 
 export type ProjectCreateWorkerId = number | null;
 
+export type ProjectCreateStatusId = number | null;
+
+export type ProjectCreatePurchaseOrder = string | null;
+
+export type ProjectCreateFolio = string | null;
+
+export type ProjectCreateType = ProjectType | null;
+
+export type ProjectCreateStartDate = string | null;
+
+export type ProjectCreateEndDate = string | null;
+
+export type ProjectCreateDirectoryPath = string | null;
+
 export interface ProjectCreate {
   name: string;
   client_id?: ProjectCreateClientId;
   worker_id?: ProjectCreateWorkerId;
+  status_id?: ProjectCreateStatusId;
+  purchase_order?: ProjectCreatePurchaseOrder;
+  folio?: ProjectCreateFolio;
+  type?: ProjectCreateType;
+  start_date?: ProjectCreateStartDate;
+  end_date?: ProjectCreateEndDate;
+  directory_path?: ProjectCreateDirectoryPath;
   created_at?: string;
   updated_at?: string;
 }
@@ -39,13 +85,93 @@ export type ProjectResponseClientId = number | null;
 
 export type ProjectResponseWorkerId = number | null;
 
+export type ProjectResponseStatusId = number | null;
+
+export type ProjectResponsePurchaseOrder = string | null;
+
+export type ProjectResponseFolio = string | null;
+
+export type ProjectResponseType = ProjectType | null;
+
+export type ProjectResponseStartDate = string | null;
+
+export type ProjectResponseEndDate = string | null;
+
+export type ProjectResponseDirectoryPath = string | null;
+
 export interface ProjectResponse {
   name: string;
   client_id?: ProjectResponseClientId;
   worker_id?: ProjectResponseWorkerId;
+  status_id?: ProjectResponseStatusId;
+  purchase_order?: ProjectResponsePurchaseOrder;
+  folio?: ProjectResponseFolio;
+  type?: ProjectResponseType;
+  start_date?: ProjectResponseStartDate;
+  end_date?: ProjectResponseEndDate;
+  directory_path?: ProjectResponseDirectoryPath;
   created_at?: string;
   updated_at?: string;
   id: number;
+}
+
+export type ProjectType = typeof ProjectType[keyof typeof ProjectType];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ProjectType = {
+  Project: 'Project',
+  Supply: 'Supply',
+  Additional: 'Additional',
+  Other: 'Other',
+} as const;
+
+export type ProjectUpdateName = string | null;
+
+export type ProjectUpdateClientId = number | null;
+
+export type ProjectUpdateWorkerId = number | null;
+
+export type ProjectUpdateStatusId = number | null;
+
+export type ProjectUpdatePurchaseOrder = string | null;
+
+export type ProjectUpdateFolio = string | null;
+
+export type ProjectUpdateType = ProjectType | null;
+
+export type ProjectUpdateStartDate = string | null;
+
+export type ProjectUpdateEndDate = string | null;
+
+export type ProjectUpdateDirectoryPath = string | null;
+
+export interface ProjectUpdate {
+  name?: ProjectUpdateName;
+  client_id?: ProjectUpdateClientId;
+  worker_id?: ProjectUpdateWorkerId;
+  status_id?: ProjectUpdateStatusId;
+  purchase_order?: ProjectUpdatePurchaseOrder;
+  folio?: ProjectUpdateFolio;
+  type?: ProjectUpdateType;
+  start_date?: ProjectUpdateStartDate;
+  end_date?: ProjectUpdateEndDate;
+  directory_path?: ProjectUpdateDirectoryPath;
+}
+
+export interface StatusCreate {
+  name: string;
+}
+
+export interface StatusResponse {
+  name: string;
+  id: number;
+}
+
+export type StatusUpdateName = string | null;
+
+export interface StatusUpdate {
+  name?: StatusUpdateName;
 }
 
 export type ValidationErrorLocItem = string | number;
@@ -84,4 +210,24 @@ export interface WorkerUpdate {
   parental_surname?: WorkerUpdateParentalSurname;
   maternal_surname?: WorkerUpdateMaternalSurname;
 }
+
+export type CreateCommentParams = {
+project_id: number;
+};
+
+export type GetCommentsParams = {
+project_id: number;
+};
+
+export type GetCommentParams = {
+project_id: number;
+};
+
+export type UpdateCommentParams = {
+project_id: number;
+};
+
+export type DeleteCommentParams = {
+project_id: number;
+};
 
