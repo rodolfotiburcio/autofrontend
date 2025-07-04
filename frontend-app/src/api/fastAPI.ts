@@ -1778,4 +1778,18 @@ export const useDeleteStatus = <TError = AxiosError<HTTPValidationError>,
 
       return useMutation(mutationOptions , queryClient);
     }
+
+// Custom helper to upload a worker photo
+export const uploadWorkerPhoto = (
+  workerId: number,
+  file: File,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<WorkerResponse>> => {
+  const formData = new FormData();
+  formData.append('file', file);
+  return axios.default.post(`/api/workers/${workerId}/photo`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data', ...(options?.headers ?? {}) },
+    ...options,
+  });
+};
     

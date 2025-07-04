@@ -186,6 +186,7 @@ export interface WorkerCreate {
   name: string;
   parental_surname: string;
   maternal_surname: string;
+  photo_url?: string | null;
   created_at?: string;
   updated_at?: string;
 }
@@ -194,6 +195,7 @@ export interface WorkerResponse {
   name: string;
   parental_surname: string;
   maternal_surname: string;
+  photo_url?: string | null;
   created_at?: string;
   updated_at?: string;
   id: number;
@@ -209,6 +211,7 @@ export interface WorkerUpdate {
   name?: WorkerUpdateName;
   parental_surname?: WorkerUpdateParentalSurname;
   maternal_surname?: WorkerUpdateMaternalSurname;
+  photo_url?: string | null;
 }
 
 export type CreateCommentParams = {
