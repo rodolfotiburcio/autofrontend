@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef } from 'react'
+import { useLayoutEffect, useRef, useState, type ChangeEvent } from 'react'
 import { yupResolver } from '@hookform/resolvers/yup'
 import clsx from 'clsx'
 import { useForm } from 'react-hook-form'
@@ -6,6 +6,7 @@ import * as yup from 'yup'
 import {
   useGetWorkers,
   useCreateWorker,
+  uploadWorkerPhoto,
 } from '../api/fastAPI'
 import type { WorkerCreate } from '../api/fastAPI.schemas'
 import {
@@ -27,6 +28,7 @@ export function WorkerList() {
   const { data, refetch } = useGetWorkers()
   const createWorker = useCreateWorker()
   const modalRef = useRef<ModalRef>(null)
+  const [photo, setPhoto] = useState<File | null>(null)
 
   const validationSchema = yup.object({
     name: yup.string().required('El nombre es requerido'),
@@ -47,7 +49,7 @@ export function WorkerList() {
   } = useForm<WorkerCreate>({
     mode: 'all',
     reValidateMode: 'onChange',
-    defaultValues: { name: '', parental_surname: '', maternal_surname: '' },
+    defaultValues: { name: '', parental_surname: '', maternal_surname: '', photo_url: undefined },
     resolver: yupResolver(validationSchema),
   })
 
@@ -59,7 +61,11 @@ export function WorkerList() {
     createWorker.mutate(
       { data },
       {
-        onSuccess: () => {
+        onSuccess: async res => {
+          if (photo) {
+            await uploadWorkerPhoto(res.data.id, photo)
+          }
+          setPhoto(null)
           modalRef.current?.close(null)
           refetch()
         },
@@ -72,6 +78,10 @@ export function WorkerList() {
   ) => {
     const value = event.detail?.value ?? event.target.value
     setValue(field, value, { shouldValidate: true })
+  }
+
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setPhoto(e.target.files?.[0] ?? null)
   }
 
   const openModal = () => {
@@ -104,6 +114,7 @@ export function WorkerList() {
                   className={clsx({ 'ix-invalid': errors.maternal_surname })}
                   invalidText={errors.maternal_surname?.message}
                 />
+                <input type="file" onChange={handleFileChange} />
               </IxLayoutAuto>
             </form>
           </IxModalContent>
@@ -136,6 +147,9 @@ export function WorkerList() {
         {workers.map(w => (
           <IxCard key={w.id} variant="outline">
             <IxCardContent>
+              {w.photo_url && (
+                <img src={w.photo_url} style={{ width: '100%', height: 'auto' }} />
+              )}
               <IxTypography bold>{w.name}</IxTypography>
               <IxTypography>{w.parental_surname} {w.maternal_surname}</IxTypography>
               <IxTypography text-color="alarm">ID: {w.id}</IxTypography>

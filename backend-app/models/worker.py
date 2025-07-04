@@ -9,6 +9,7 @@ class WorkerBase(SQLModel):
     name: str
     parental_surname: str
     maternal_surname: str
+    photo_url: Optional[str] = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
 
@@ -26,3 +27,4 @@ class WorkerUpdate(SQLModel):
     name: Optional[str] = None
     parental_surname: Optional[str] = None
     maternal_surname: Optional[str] = None
+    photo_url: Optional[str] = None
