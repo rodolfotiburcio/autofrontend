@@ -22,6 +22,11 @@ import {
   IxModalHeader,
   IxModalContent,
   IxModalFooter,
+  IxWorkflowStep,
+  IxWorkflowSteps,
+  IxLayoutGrid,
+  IxCol,
+  IxRow,
 } from '@siemens/ix-react'
 
 export function WorkerList() {
@@ -58,12 +63,15 @@ export function WorkerList() {
   }, [trigger])
 
   const onSubmit = (data: WorkerCreate) => {
+    console.log("Creando trabajador")
     createWorker.mutate(
       { data },
       {
         onSuccess: async res => {
           if (photo) {
+            console.log("Subiendo Foto")
             await uploadWorkerPhoto(res.data.id, photo)
+            console.log("Foto subida")
           }
           setPhoto(null)
           modalRef.current?.close(null)
@@ -147,16 +155,30 @@ export function WorkerList() {
       >
         {workers.map(w => (
           <IxCard key={w.id} variant="outline">
-            <IxCardContent>
-              {w.photo_url && (
-                <img src={w.photo_url} style={{ width: 'auto', height: '100px' }} />
-              )}
-              <IxTypography bold>{w.name}</IxTypography>
-              <IxTypography>{w.parental_surname} {w.maternal_surname}</IxTypography>
-              <IxTypography text-color="alarm">ID: {w.id}</IxTypography>
-            </IxCardContent>
+            <IxLayoutGrid>
+              <IxRow>
+                <IxCardContent>
+                  {w.photo_url && (
+                    <img src={w.photo_url} style={{ width: 'auto', height: '100px' }} />
+                  )}
+                  <IxTypography bold>{w.name}</IxTypography>
+                  <IxTypography>{w.parental_surname} {w.maternal_surname}</IxTypography>
+                  <IxTypography text-color="alarm">ID: {w.id}</IxTypography>
+                </IxCardContent>
+              </IxRow>
+              <IxRow>
+              <IxWorkflowSteps>
+                  <IxWorkflowStep status="done"></IxWorkflowStep>
+                  <IxWorkflowStep status="done"></IxWorkflowStep>
+                  <IxWorkflowStep status="done"></IxWorkflowStep>
+                  <IxWorkflowStep status="success"></IxWorkflowStep>
+                </IxWorkflowSteps>
+              </IxRow>
+            </IxLayoutGrid>
+
           </IxCard>
         ))}
+      
       </IxLayoutAuto>
     </>
   )

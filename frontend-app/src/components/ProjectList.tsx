@@ -285,6 +285,7 @@ export function ProjectList() {
         resizable: true,
         sortable: true,
         filter:true,
+        suppressAutoSize:true,
       },
       {
         field: 'type',

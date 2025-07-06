@@ -544,7 +544,7 @@ export const useDeleteWorker = <TError = AxiosError<HTTPValidationError>,
  */
 export const uploadWorkerPhoto = (
     workerId: number,
-    bodyUploadWorkerPhoto: BodyUploadWorkerPhoto, options?: AxiosRequestConfig
+    bodyUploadWorkerPhoto: any, options?: AxiosRequestConfig
  ): Promise<AxiosResponse<WorkerResponse>> => {
     
     const formData = new FormData();
