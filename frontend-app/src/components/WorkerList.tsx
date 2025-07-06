@@ -25,7 +25,6 @@ import {
   IxWorkflowStep,
   IxWorkflowSteps,
   IxLayoutGrid,
-  IxCol,
   IxRow,
 } from '@siemens/ix-react'
 
