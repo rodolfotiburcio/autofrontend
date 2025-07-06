@@ -4,6 +4,10 @@
  * FastAPI
  * OpenAPI spec version: 0.1.0
  */
+export interface BodyUploadWorkerPhoto {
+  file: Blob;
+}
+
 export interface ClientCreate {
   name: string;
   score: number;
@@ -17,6 +21,15 @@ export interface ClientResponse {
   create_at?: string;
   updated_at?: string;
   id: number;
+}
+
+export type ClientUpdateName = string | null;
+
+export type ClientUpdateScore = number | null;
+
+export interface ClientUpdate {
+  name?: ClientUpdateName;
+  score?: ClientUpdateScore;
 }
 
 export interface CommentCreate {
@@ -182,20 +195,24 @@ export interface ValidationError {
   type: string;
 }
 
+export type WorkerCreatePhotoUrl = string | null;
+
 export interface WorkerCreate {
   name: string;
   parental_surname: string;
   maternal_surname: string;
-  photo_url?: string | null;
+  photo_url?: WorkerCreatePhotoUrl;
   created_at?: string;
   updated_at?: string;
 }
+
+export type WorkerResponsePhotoUrl = string | null;
 
 export interface WorkerResponse {
   name: string;
   parental_surname: string;
   maternal_surname: string;
-  photo_url?: string | null;
+  photo_url?: WorkerResponsePhotoUrl;
   created_at?: string;
   updated_at?: string;
   id: number;
@@ -207,11 +224,13 @@ export type WorkerUpdateParentalSurname = string | null;
 
 export type WorkerUpdateMaternalSurname = string | null;
 
+export type WorkerUpdatePhotoUrl = string | null;
+
 export interface WorkerUpdate {
   name?: WorkerUpdateName;
   parental_surname?: WorkerUpdateParentalSurname;
   maternal_surname?: WorkerUpdateMaternalSurname;
-  photo_url?: string | null;
+  photo_url?: WorkerUpdatePhotoUrl;
 }
 
 export type CreateCommentParams = {

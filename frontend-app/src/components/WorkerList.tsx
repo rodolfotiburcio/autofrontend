@@ -139,16 +139,17 @@ export function WorkerList() {
 
       <IxLayoutAuto
         layout={[
-          { minWidth: '0', columns: 1 },
-          { minWidth: '560px', columns: 3 },
-          { minWidth: '800px', columns: 4 },
+          { minWidth: '0', columns: 2 },
+          { minWidth: '600px', columns: 3 },
+          { minWidth: '900px', columns: 5 },
+          { minWidth: '1400px', columns: 8 },
         ]}
       >
         {workers.map(w => (
           <IxCard key={w.id} variant="outline">
             <IxCardContent>
               {w.photo_url && (
-                <img src={w.photo_url} style={{ width: '100%', height: 'auto' }} />
+                <img src={w.photo_url} style={{ width: 'auto', height: '100px' }} />
               )}
               <IxTypography bold>{w.name}</IxTypography>
               <IxTypography>{w.parental_surname} {w.maternal_surname}</IxTypography>

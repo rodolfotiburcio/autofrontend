@@ -8,8 +8,11 @@ import {
   useCreateProject,
   useGetClients,
   useGetWorkers,
+  useGetStatus,
+  useGetStatuses,
 } from '../api/fastAPI'
 import type { ProjectCreate } from '../api/fastAPI.schemas'
+import { ProjectType } from '../api/fastAPI.schemas'
 import {
   IxInput,
   IxSelect,
@@ -35,6 +38,7 @@ export function ProjectList() {
   const createProject = useCreateProject()
   const { data: clientsData } = useGetClients()
   const { data: workersData } = useGetWorkers()
+  const { data: statusesData } = useGetStatuses()
   const modalRef = useRef<ModalRef>(null)
 
   const validationSchema = yup.object({
@@ -44,8 +48,29 @@ export function ProjectList() {
       .nonNullable(),
     worker_id: yup
       .number()
-      .nonNullable()
-  });
+      .nonNullable(),
+    status_id: yup
+      .number()
+      .nonNullable(),
+    purchase_order: yup
+      .string()
+      .nonNullable(),
+    folio: yup
+      .string()
+      .nonNullable(),
+    type: yup
+      .string()
+      .nonNullable(),
+    start_date: yup
+      .string()
+      .nonNullable(),
+    end_date: yup
+      .string()
+      .nonNullable(),
+    directory_path: yup
+      .string()
+      .nonNullable(),
+});
 
   const {
     register,
@@ -62,15 +87,26 @@ export function ProjectList() {
       name: '',
       client_id: undefined,
       worker_id: undefined,
+      status_id: undefined,
+      purchase_order: '',
+      folio: '',
+      type: undefined,
+      start_date: '',
+      end_date: '',
+      directory_path: '',
     },
     resolver: yupResolver(validationSchema),
   });
 
   const handleSelectChange =
-    (field: 'client_id' | 'worker_id') =>
+    (field: 'client_id' | 'worker_id' | 'status_id' | 'type',) =>
     (event: CustomEvent<string | string[]>) => {
       const value = Array.isArray(event.detail) ? event.detail[0] : event.detail
-      setValue(field, Number(value), { shouldValidate: true })
+      if (field ==='client_id' || field === 'worker_id' || field === 'status_id'){
+        setValue(field, Number(value), { shouldValidate: true })
+      } else {
+        setValue(field, value as any, {shouldValidate: true})
+      }
     }
 
   useLayoutEffect(() => {
@@ -86,6 +122,14 @@ export function ProjectList() {
           modalRef.current?.close(null)
           setValue('name','')
           setValue('client_id', undefined)
+          setValue('worker_id', undefined)
+          setValue('status_id', undefined)
+          setValue('purchase_order', '')
+          setValue('folio', '')
+          setValue('type', undefined)
+          setValue('start_date', '')
+          setValue('end_date', '')
+          setValue('directory_path', '')
           refetch()
         }
       }
@@ -131,6 +175,39 @@ export function ProjectList() {
                     />
                   ))}
                 </IxSelect>
+                <IxSelect
+                  label="Estatus"
+                  value={(watch('status_id') ?? '').toString()}
+                  {...register('status_id')}
+                  onValueChange={handleSelectChange('status_id')}
+                >
+                  {(statusesData?.data ?? []).map(s => (
+                    <IxSelectItem key={s.id} label={s.name} value={s.id.toString()} />
+                  ))}
+                </IxSelect>
+                <IxInput label="Orden de compra" {...register('purchase_order')} />
+                <IxInput label="Folio" {...register('folio')} />
+                <IxSelect
+                  label="Tipo"
+                  value={(watch('type') ?? '').toString()}
+                  {...register('type')}
+                  onValueChange={handleSelectChange('type')}
+                >
+                  {Object.entries(ProjectType).map(([key, value]) => (
+                    <IxSelectItem key={key} label={value} value={value} />
+                  ))}
+                </IxSelect>
+                <IxInput
+                  label="Fecha inicio"
+                  type="date"
+                  {...register('start_date')}
+                />
+                <IxInput
+                  label="Fecha fin"
+                  type="date"
+                  {...register('end_date')}
+                />
+                <IxInput label="Directorio" {...register('directory_path')} />
               </IxLayoutAuto>
             </form>
           </IxModalContent>
@@ -148,6 +225,7 @@ export function ProjectList() {
   const projects = data?.data ?? []
   const clients = clientsData?.data ?? []
   const workers = workersData?.data ?? []
+  const statuses = statusesData?.data ?? []
 
   const columnDefs = useMemo<ColDef[]>(
     () => [
@@ -183,6 +261,59 @@ export function ProjectList() {
           return worker ? `${worker.name} ${worker.parental_surname}` : ''
         },
       },
+      {
+        field: 'status_id',
+        headerName: 'Estado',
+        resizable: true,
+        sortable: true,
+        filter: true,
+        valueGetter: params => {
+          const status = statuses.find(s => s.id === params.data.status_id)
+          return status ? `${status.name}` : ''
+        },
+      },
+      {
+        field: 'purchase_order',
+        headerName: 'OC',
+        resizable: true,
+        sortable: true,
+        filter: true,
+      },
+      {
+        field: 'folio',
+        headerName: 'Folio',
+        resizable: true,
+        sortable: true,
+        filter:true,
+      },
+      {
+        field: 'type',
+        headerName: 'Tipo',
+        resizable: true,
+        sortable: true,
+        filter: true,
+      },
+      {
+        field: 'start_date',
+        headerName: 'Inicio',
+        resizable: true,
+        sortable: true,
+        filter: true,
+      },
+      {
+        field: 'end_date',
+        headerName: 'Fin',
+        resizable: true,
+        sortable: true,
+        filter: true,
+      },
+      {
+        field: 'directory_path',
+        headerName: 'Carpeta',
+        resizable: true,
+        sortable: true,
+        filter: true,
+      }
     ],
     [],
   )

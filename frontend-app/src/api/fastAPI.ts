@@ -31,8 +31,10 @@ import type {
 } from 'axios';
 
 import type {
+  BodyUploadWorkerPhoto,
   ClientCreate,
   ClientResponse,
+  ClientUpdate,
   CommentCreate,
   CommentResponse,
   CommentUpdate,
@@ -538,6 +540,71 @@ export const useDeleteWorker = <TError = AxiosError<HTTPValidationError>,
     }
     
 /**
+ * @summary Upload Worker Photo
+ */
+export const uploadWorkerPhoto = (
+    workerId: number,
+    bodyUploadWorkerPhoto: BodyUploadWorkerPhoto, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<WorkerResponse>> => {
+    
+    const formData = new FormData();
+formData.append(`file`, bodyUploadWorkerPhoto.file)
+
+    return axios.default.post(
+      `/api/workers/${workerId}/photo`,
+      formData,options
+    );
+  }
+
+
+
+export const getUploadWorkerPhotoMutationOptions = <TError = AxiosError<HTTPValidationError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof uploadWorkerPhoto>>, TError,{workerId: number;data: BodyUploadWorkerPhoto}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof uploadWorkerPhoto>>, TError,{workerId: number;data: BodyUploadWorkerPhoto}, TContext> => {
+
+const mutationKey = ['uploadWorkerPhoto'];
+const {mutation: mutationOptions, axios: axiosOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, axios: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof uploadWorkerPhoto>>, {workerId: number;data: BodyUploadWorkerPhoto}> = (props) => {
+          const {workerId,data} = props ?? {};
+
+          return  uploadWorkerPhoto(workerId,data,axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UploadWorkerPhotoMutationResult = NonNullable<Awaited<ReturnType<typeof uploadWorkerPhoto>>>
+    export type UploadWorkerPhotoMutationBody = BodyUploadWorkerPhoto
+    export type UploadWorkerPhotoMutationError = AxiosError<HTTPValidationError>
+
+    /**
+ * @summary Upload Worker Photo
+ */
+export const useUploadWorkerPhoto = <TError = AxiosError<HTTPValidationError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof uploadWorkerPhoto>>, TError,{workerId: number;data: BodyUploadWorkerPhoto}, TContext>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof uploadWorkerPhoto>>,
+        TError,
+        {workerId: number;data: BodyUploadWorkerPhoto},
+        TContext
+      > => {
+
+      const mutationOptions = getUploadWorkerPhotoMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
  * @summary Get Clients
  */
 export const getClients = (
@@ -681,6 +748,216 @@ export const useCreateClient = <TError = AxiosError<HTTPValidationError>,
       > => {
 
       const mutationOptions = getCreateClientMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * @summary Get Client
+ */
+export const getClient = (
+    clientId: number, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<ClientResponse>> => {
+    
+    
+    return axios.default.get(
+      `/api/clients/${clientId}`,options
+    );
+  }
+
+
+export const getGetClientQueryKey = (clientId: number,) => {
+    return [`/api/clients/${clientId}`] as const;
+    }
+
+    
+export const getGetClientQueryOptions = <TData = Awaited<ReturnType<typeof getClient>>, TError = AxiosError<HTTPValidationError>>(clientId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getClient>>, TError, TData>>, axios?: AxiosRequestConfig}
+) => {
+
+const {query: queryOptions, axios: axiosOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetClientQueryKey(clientId);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getClient>>> = ({ signal }) => getClient(clientId, { signal, ...axiosOptions });
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(clientId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getClient>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetClientQueryResult = NonNullable<Awaited<ReturnType<typeof getClient>>>
+export type GetClientQueryError = AxiosError<HTTPValidationError>
+
+
+export function useGetClient<TData = Awaited<ReturnType<typeof getClient>>, TError = AxiosError<HTTPValidationError>>(
+ clientId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getClient>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getClient>>,
+          TError,
+          Awaited<ReturnType<typeof getClient>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetClient<TData = Awaited<ReturnType<typeof getClient>>, TError = AxiosError<HTTPValidationError>>(
+ clientId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getClient>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getClient>>,
+          TError,
+          Awaited<ReturnType<typeof getClient>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetClient<TData = Awaited<ReturnType<typeof getClient>>, TError = AxiosError<HTTPValidationError>>(
+ clientId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getClient>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get Client
+ */
+
+export function useGetClient<TData = Awaited<ReturnType<typeof getClient>>, TError = AxiosError<HTTPValidationError>>(
+ clientId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getClient>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetClientQueryOptions(clientId,options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * @summary Update Client
+ */
+export const updateClient = (
+    clientId: number,
+    clientUpdate: ClientUpdate, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<ClientResponse>> => {
+    
+    
+    return axios.default.put(
+      `/api/clients/${clientId}`,
+      clientUpdate,options
+    );
+  }
+
+
+
+export const getUpdateClientMutationOptions = <TError = AxiosError<HTTPValidationError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateClient>>, TError,{clientId: number;data: ClientUpdate}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof updateClient>>, TError,{clientId: number;data: ClientUpdate}, TContext> => {
+
+const mutationKey = ['updateClient'];
+const {mutation: mutationOptions, axios: axiosOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, axios: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateClient>>, {clientId: number;data: ClientUpdate}> = (props) => {
+          const {clientId,data} = props ?? {};
+
+          return  updateClient(clientId,data,axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateClientMutationResult = NonNullable<Awaited<ReturnType<typeof updateClient>>>
+    export type UpdateClientMutationBody = ClientUpdate
+    export type UpdateClientMutationError = AxiosError<HTTPValidationError>
+
+    /**
+ * @summary Update Client
+ */
+export const useUpdateClient = <TError = AxiosError<HTTPValidationError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateClient>>, TError,{clientId: number;data: ClientUpdate}, TContext>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof updateClient>>,
+        TError,
+        {clientId: number;data: ClientUpdate},
+        TContext
+      > => {
+
+      const mutationOptions = getUpdateClientMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * @summary Delete Client
+ */
+export const deleteClient = (
+    clientId: number, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<void>> => {
+    
+    
+    return axios.default.delete(
+      `/api/clients/${clientId}`,options
+    );
+  }
+
+
+
+export const getDeleteClientMutationOptions = <TError = AxiosError<HTTPValidationError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteClient>>, TError,{clientId: number}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteClient>>, TError,{clientId: number}, TContext> => {
+
+const mutationKey = ['deleteClient'];
+const {mutation: mutationOptions, axios: axiosOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, axios: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteClient>>, {clientId: number}> = (props) => {
+          const {clientId} = props ?? {};
+
+          return  deleteClient(clientId,axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteClientMutationResult = NonNullable<Awaited<ReturnType<typeof deleteClient>>>
+    
+    export type DeleteClientMutationError = AxiosError<HTTPValidationError>
+
+    /**
+ * @summary Delete Client
+ */
+export const useDeleteClient = <TError = AxiosError<HTTPValidationError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteClient>>, TError,{clientId: number}, TContext>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deleteClient>>,
+        TError,
+        {clientId: number},
+        TContext
+      > => {
+
+      const mutationOptions = getDeleteClientMutationOptions(options);
 
       return useMutation(mutationOptions , queryClient);
     }
@@ -1778,18 +2055,4 @@ export const useDeleteStatus = <TError = AxiosError<HTTPValidationError>,
 
       return useMutation(mutationOptions , queryClient);
     }
-
-// Custom helper to upload a worker photo
-export const uploadWorkerPhoto = (
-  workerId: number,
-  file: File,
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<WorkerResponse>> => {
-  const formData = new FormData();
-  formData.append('file', file);
-  return axios.default.post(`/api/workers/${workerId}/photo`, formData, {
-    headers: { 'Content-Type': 'multipart/form-data', ...(options?.headers ?? {}) },
-    ...options,
-  });
-};
     

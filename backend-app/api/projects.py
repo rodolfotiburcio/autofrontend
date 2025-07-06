@@ -7,58 +7,6 @@ from datetime import datetime
 
 router = APIRouter()
 
-@router.post("/", response_model=ProjectResponse, operation_id="createProject")
-def create_project(project: ProjectCreate, session: Session = Depends(get_session)):
-    db_project = Project.model_validate(project)
-    session.add(db_project)
-    session.commit()
-    session.refresh(db_project)
-    return db_project
-
-@router.get("/", response_model=list[ProjectResponse], operation_id="getProjects")
-def get_projects(session: Session = Depends(get_session)):
-    statement = select(Project)
-    result = session.exec(statement).all()
-    return result
-
-@router.get("/{project_id}", response_model=ProjectResponse, operation_id="getProject")
-def get_project(project_id: int, session: Session = Depends(get_session)):
-    project = session.get(Project, project_id)
-    if not project:
-        raise HTTPException(status_code=404, detail="Project not found")
-    return project
-
-
-@router.put("/{project_id}", response_model=ProjectResponse, operation_id="updateProject")
-def update_project(
-    project_id: int, project_update: ProjectUpdate, session: Session = Depends(get_session)
-):
-    db_project = session.get(Project, project_id)
-    if not db_project:
-        raise HTTPException(status_code=404, detail="Project not found")
-    project_data = project_update.model_dump(exclude_unset=True)
-    for key, value in project_data.items():
-        setattr(db_project, key, value)
-    db_project.updated_at = datetime.utcnow()
-    session.add(db_project)
-    session.commit()
-    session.refresh(db_project)
-    return db_project
-
-
-@router.delete(
-    "/{project_id}", status_code=status.HTTP_204_NO_CONTENT, operation_id="deleteProject"
-)
-def delete_project(project_id: int, session: Session = Depends(get_session)):
-    db_project = session.get(Project, project_id)
-    if not db_project:
-        raise HTTPException(status_code=404, detail="Project not found")
-    session.delete(db_project)
-    session.commit()
-    return JSONResponse(status_code=status.HTTP_204_NO_CONTENT, content=None)
-
-
-
 @router.post("/newcomment", response_model=CommentResponse, operation_id="createComment")
 def create_comment(
     project_id: int, comment: CommentCreate, session: Session = Depends(get_session)
@@ -128,6 +76,7 @@ def create_status(status_obj: StatusCreate, session: Session = Depends(get_sessi
 @router.get("/statuses", response_model=list[StatusResponse], operation_id="getStatuses")
 def get_statuses(session: Session = Depends(get_session)):
     statement = select(Status)
+    print(statement)
     return session.exec(statement).all()
 
 @router.get("/status/{status_id}", response_model=StatusResponse, operation_id="getStatus")
@@ -156,5 +105,57 @@ def delete_status(status_id: int, session: Session = Depends(get_session)):
     if not db_status:
         raise HTTPException(status_code=404, detail="Status not found")
     session.delete(db_status)
+    session.commit()
+    return JSONResponse(status_code=status.HTTP_204_NO_CONTENT, content=None)
+
+
+
+@router.post("/", response_model=ProjectResponse, operation_id="createProject")
+def create_project(project: ProjectCreate, session: Session = Depends(get_session)):
+    db_project = Project.model_validate(project)
+    session.add(db_project)
+    session.commit()
+    session.refresh(db_project)
+    return db_project
+
+@router.get("/", response_model=list[ProjectResponse], operation_id="getProjects")
+def get_projects(session: Session = Depends(get_session)):
+    statement = select(Project)
+    result = session.exec(statement).all()
+    return result
+
+@router.get("/{project_id}", response_model=ProjectResponse, operation_id="getProject")
+def get_project(project_id: int, session: Session = Depends(get_session)):
+    project = session.get(Project, project_id)
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+    return project
+
+
+@router.put("/{project_id}", response_model=ProjectResponse, operation_id="updateProject")
+def update_project(
+    project_id: int, project_update: ProjectUpdate, session: Session = Depends(get_session)
+):
+    db_project = session.get(Project, project_id)
+    if not db_project:
+        raise HTTPException(status_code=404, detail="Project not found")
+    project_data = project_update.model_dump(exclude_unset=True)
+    for key, value in project_data.items():
+        setattr(db_project, key, value)
+    db_project.updated_at = datetime.utcnow()
+    session.add(db_project)
+    session.commit()
+    session.refresh(db_project)
+    return db_project
+
+
+@router.delete(
+    "/{project_id}", status_code=status.HTTP_204_NO_CONTENT, operation_id="deleteProject"
+)
+def delete_project(project_id: int, session: Session = Depends(get_session)):
+    db_project = session.get(Project, project_id)
+    if not db_project:
+        raise HTTPException(status_code=404, detail="Project not found")
+    session.delete(db_project)
     session.commit()
     return JSONResponse(status_code=status.HTTP_204_NO_CONTENT, content=None)
