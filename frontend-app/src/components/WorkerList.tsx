@@ -6,7 +6,6 @@ import * as yup from 'yup'
 import {
   useGetWorkers,
   useCreateWorker,
-  uploadWorkerPhoto,
 } from '../api/fastAPI'
 import type { WorkerCreate } from '../api/fastAPI.schemas'
 import {
@@ -30,7 +29,9 @@ import {
 
 export function WorkerList() {
   const { data, refetch } = useGetWorkers()
-  const createWorker = useCreateWorker()
+  const createWorker = useCreateWorker({
+    axios: { headers: { 'Content-Type': 'multipart/form-data' } },
+  })
   const modalRef = useRef<ModalRef>(null)
   const [photo, setPhoto] = useState<File | null>(null)
 
@@ -62,16 +63,18 @@ export function WorkerList() {
   }, [trigger])
 
   const onSubmit = (data: WorkerCreate) => {
-    console.log("Creando trabajador")
+    const formData = new FormData()
+    formData.append('name', data.name)
+    formData.append('parental_surname', data.parental_surname)
+    formData.append('maternal_surname', data.maternal_surname)
+    if (photo) {
+      formData.append('file', photo)
+    }
+
     createWorker.mutate(
-      { data },
+      { data: formData as unknown as WorkerCreate },
       {
-        onSuccess: async res => {
-          if (photo) {
-            console.log("Subiendo Foto")
-            await uploadWorkerPhoto(res.data.id, photo)
-            console.log("Foto subida")
-          }
+        onSuccess: () => {
           setPhoto(null)
           modalRef.current?.close(null)
           refetch()
