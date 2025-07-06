@@ -1,4 +1,12 @@
-from fastapi import APIRouter, HTTPException, Depends, status, UploadFile, File
+from fastapi import (
+    APIRouter,
+    HTTPException,
+    Depends,
+    status,
+    UploadFile,
+    File,
+    Form,
+)
 from fastapi.responses import JSONResponse
 import os
 import shutil
@@ -10,11 +18,34 @@ from core.database import get_session
 router = APIRouter()
 
 @router.post("/", response_model=WorkerResponse, operation_id="createWorker")
-def create_worker(worker:WorkerCreate, session: Session = Depends(get_session)):
-    db_worker = Worker.model_validate(worker)
+async def create_worker(
+    name: str = Form(...),
+    parental_surname: str = Form(...),
+    maternal_surname: str = Form(...),
+    file: UploadFile | None = File(None),
+    session: Session = Depends(get_session),
+):
+    db_worker = Worker(
+        name=name,
+        parental_surname=parental_surname,
+        maternal_surname=maternal_surname,
+    )
     session.add(db_worker)
     session.commit()
     session.refresh(db_worker)
+
+    if file is not None:
+        upload_dir = os.path.join(os.path.dirname(__file__), "../static/workers")
+        os.makedirs(upload_dir, exist_ok=True)
+        file_path = os.path.join(upload_dir, f"{db_worker.id}_{file.filename}")
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+        db_worker.photo_url = f"/static/workers/{db_worker.id}_{file.filename}"
+        db_worker.updated_at = datetime.utcnow()
+        session.add(db_worker)
+        session.commit()
+        session.refresh(db_worker)
+
     return db_worker
 
 
