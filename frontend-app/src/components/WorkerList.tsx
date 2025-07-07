@@ -7,7 +7,7 @@ import {
   useGetWorkers,
   useCreateWorker,
 } from '../api/fastAPI'
-import type { WorkerCreate } from '../api/fastAPI.schemas'
+import type { BodyCreateWorker } from '../api/fastAPI.schemas'
 import {
   IxCard,
   IxCardContent,
@@ -25,6 +25,7 @@ import {
   IxWorkflowSteps,
   IxLayoutGrid,
   IxRow,
+  IxUpload,
 } from '@siemens/ix-react'
 
 export function WorkerList() {
@@ -34,6 +35,7 @@ export function WorkerList() {
   })
   const modalRef = useRef<ModalRef>(null)
   const [photo, setPhoto] = useState<File | null>(null)
+  const [photo_name, setPhoto_name] = useState<string | null>(null)
 
   const validationSchema = yup.object({
     name: yup.string().required('El nombre es requerido'),
@@ -51,7 +53,7 @@ export function WorkerList() {
     formState: { errors },
     trigger,
     setValue,
-  } = useForm<WorkerCreate>({
+  } = useForm<BodyCreateWorker>({
     mode: 'all',
     reValidateMode: 'onChange',
     defaultValues: { name: '', parental_surname: '', maternal_surname: '', photo_url: undefined },
@@ -62,17 +64,22 @@ export function WorkerList() {
     trigger()
   }, [trigger])
 
-  const onSubmit = (data: WorkerCreate) => {
+  const onSubmit = (data: BodyCreateWorker) => {
+    console.log('onSubmit function')
+    console.log({data})
     const formData = new FormData()
     formData.append('name', data.name)
     formData.append('parental_surname', data.parental_surname)
     formData.append('maternal_surname', data.maternal_surname)
-    if (photo) {
-      formData.append('file', photo)
-    }
-
+    // console.log(photo)
+    // if (photo) {
+    //   formData.append('file', photo)
+    // }
+    // for (const pair of formData.entries()){
+    //   console.log(pair[0], pair[1])
+    // }
     createWorker.mutate(
-      { data: formData as unknown as WorkerCreate },
+      { data: formData as unknown as BodyCreateWorker },
       {
         onSuccess: () => {
           setPhoto(null)
@@ -84,14 +91,18 @@ export function WorkerList() {
   }
 
   const handleChange = (field: keyof WorkerCreate) => (
-    event: CustomEvent<{ value: string }> | React.ChangeEvent<HTMLInputElement>,
+    event: CustomEvent<{ value: string }> | ChangeEvent<HTMLInputElement>,
   ) => {
     const value = event.detail?.value ?? event.target.value
     setValue(field, value, { shouldValidate: true })
   }
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setPhoto(e.target.files?.[0] ?? null)
+  const handleFileChange = (e: CustomEvent<File[]>) => {
+    console.log('File name')
+    console.log(e.detail[0].name)
+    setPhoto_name(e.detail[0].name)
+    console.log(photo_name)
+    setPhoto(e.detail[0])
   }
 
   const openModal = () => {
@@ -124,7 +135,7 @@ export function WorkerList() {
                   className={clsx({ 'ix-invalid': errors.maternal_surname })}
                   invalidText={errors.maternal_surname?.message}
                 />
-                <input type="file" onChange={handleFileChange} />
+                <IxUpload onFilesChanged={handleFileChange}/>
               </IxLayoutAuto>
             </form>
           </IxModalContent>

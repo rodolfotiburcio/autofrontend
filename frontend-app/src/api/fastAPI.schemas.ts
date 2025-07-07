@@ -4,6 +4,15 @@
  * FastAPI
  * OpenAPI spec version: 0.1.0
  */
+export type BodyCreateWorkerFile = Blob | null;
+
+export interface BodyCreateWorker {
+  name: string;
+  parental_surname: string;
+  maternal_surname: string;
+  file?: BodyCreateWorkerFile;
+}
+
 export interface BodyUploadWorkerPhoto {
   file: Blob;
 }
@@ -193,17 +202,6 @@ export interface ValidationError {
   loc: ValidationErrorLocItem[];
   msg: string;
   type: string;
-}
-
-export type WorkerCreatePhotoUrl = string | null;
-
-export interface WorkerCreate {
-  name: string;
-  parental_surname: string;
-  maternal_surname: string;
-  photo_url?: WorkerCreatePhotoUrl;
-  created_at?: string;
-  updated_at?: string;
 }
 
 export type WorkerResponsePhotoUrl = string | null;
