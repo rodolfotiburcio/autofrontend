@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState, type ChangeEvent } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import { yupResolver } from '@hookform/resolvers/yup'
 import clsx from 'clsx'
 import { useForm } from 'react-hook-form'
@@ -35,7 +35,6 @@ export function WorkerList() {
   })
   const modalRef = useRef<ModalRef>(null)
   const [photo, setPhoto] = useState<File | null>(null)
-  const [photo_name, setPhoto_name] = useState<string | null>(null)
 
   const validationSchema = yup.object({
     name: yup.string().required('El nombre es requerido'),
@@ -56,7 +55,7 @@ export function WorkerList() {
   } = useForm<BodyCreateWorker>({
     mode: 'all',
     reValidateMode: 'onChange',
-    defaultValues: { name: '', parental_surname: '', maternal_surname: '', photo_url: undefined },
+    defaultValues: { name: '', parental_surname: '', maternal_surname: '', file: undefined },
     resolver: yupResolver(validationSchema),
   })
 
@@ -65,21 +64,14 @@ export function WorkerList() {
   }, [trigger])
 
   const onSubmit = (data: BodyCreateWorker) => {
-    console.log('onSubmit function')
-    console.log({data})
-    const formData = new FormData()
-    formData.append('name', data.name)
-    formData.append('parental_surname', data.parental_surname)
-    formData.append('maternal_surname', data.maternal_surname)
-    // console.log(photo)
-    // if (photo) {
-    //   formData.append('file', photo)
-    // }
-    // for (const pair of formData.entries()){
-    //   console.log(pair[0], pair[1])
-    // }
+    const body: BodyCreateWorker = {
+      name: data.name,
+      parental_surname: data.parental_surname,
+      maternal_surname: data.maternal_surname,
+      file: photo ?? undefined,
+    }
     createWorker.mutate(
-      { data: formData as unknown as BodyCreateWorker },
+      { data: body },
       {
         onSuccess: () => {
           setPhoto(null)
@@ -90,18 +82,16 @@ export function WorkerList() {
     )
   }
 
-  const handleChange = (field: keyof WorkerCreate) => (
-    event: CustomEvent<{ value: string }> | ChangeEvent<HTMLInputElement>,
+  const handleChange = (
+    field: keyof BodyCreateWorker,
+  ) => (
+    event: { detail?: { value: string }; target: { value: string } },
   ) => {
     const value = event.detail?.value ?? event.target.value
     setValue(field, value, { shouldValidate: true })
   }
 
   const handleFileChange = (e: CustomEvent<File[]>) => {
-    console.log('File name')
-    console.log(e.detail[0].name)
-    setPhoto_name(e.detail[0].name)
-    console.log(photo_name)
     setPhoto(e.detail[0])
   }
 
